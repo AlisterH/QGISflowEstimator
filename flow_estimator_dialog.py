@@ -132,7 +132,12 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
         if Q != 0:
             self.axes.plot(xWater, yWater, 'blue')
             self.axes.fill_between(xWater, yWater, yWater0, where=yWater>=yWater0, facecolor='blue', interpolate=True, alpha = 0.1)
-        self.outText = 'R: {0:.2f} {5}\nArea: {1:,.2f} {5}$^2$\nTop Width: {2:.2f} {5}\nDepth: {6:,.2f} {5}\nQ: {3:,.2f} {5}$^3$/s\nVelocity {4:,.2f} {5}/s'.format(R, area, topWidth, Q, v, self.units, depth) 
+        if self.calcType == 'DEM':
+            self.outText = 'INPUT\n\nSlope: {7:.5f}\nRoughness: {8:.2f}\nWSE: {9:.2f} {5}\n\nCALCULATED\n\nR: {0:.2f} {5}\nArea: {1:,.2f} {5}$^2$\nTop Width: {2:.2f} {5}\nDepth: {6:,.2f} {5}\nQ: {3:,.2f} {5}$^3$/s\nVelocity {4:,.2f} {5}/s'.format(R, area, topWidth, Q, v, self.units, depth, self.slope.value(), self.n.value(), self.cbWSE.value()) 
+        elif self.calcType == 'UD':
+            self.outText = 'INPUT\n\nSlope: {7:.5f}\nRoughness: {8:.2f}\nWSE: {9:.2f} {5}\n\nCALCULATED\n\nR: {0:.2f} {5}\nArea: {1:,.2f} {5}$^2$\nTop Width: {2:.2f} {5}\nDepth: {6:,.2f} {5}\nQ: {3:,.2f} {5}$^3$/s\nVelocity {4:,.2f} {5}/s'.format(R, area, topWidth, Q, v, self.units, depth, self.slope.value(), self.n.value(), self.cbUDwse.value()) 
+        else:
+            self.outText = 'INPUT\n\nSlope: {7:.5f}\nRoughness: {8:.2f}\nDepth: {9:.2f} {5}\n\nCALCULATED\n\nR: {0:.2f} {5}\nArea: {1:,.2f} {5}$^2$\nTop Width: {2:.2f} {5}\nDepth: {6:,.2f} {5}\nQ: {3:,.2f} {5}$^3$/s\nVelocity {4:,.2f} {5}/s'.format(R, area, topWidth, Q, v, self.units, depth, self.slope.value(), self.n.value(), self.depth.value()) 
         self.axes.set_xlabel('Station, '+self.units)
         self.axes.set_ylabel('Elevation, '+self.units)
         self.axes.set_title('Cross Section')
@@ -145,7 +150,7 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
     
     def refreshPlotText(self):
 
-        self.axes.annotate(self.outText, xy=(.8,.35), xycoords='figure fraction')
+        self.axes.annotate(self.outText, xy=(.8,0.17), xycoords='figure fraction')
         #at.patch.set_boxstyle("round,pad=0.,rounding_size=0.2")
         #self.axes.add_artist(at)
         self.mplCanvas.draw()
@@ -510,7 +515,7 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
              wseMin = self.cbUDwse.minimum()            
             
         else:
-            outHeader += '\n'*5 + 'Type:\tTrapizodal Channel\nUnits:\t{0}\nChannel Slope:\t{1:.06f}\nMannings n:\t{2:.02f}\nBottom Width:\t{3:.02f}\nRight Side Slope:\t{4:.02f}\nLeft Side Slope:\t{5:.02f}\n'.format(self.units, self.slope.value(), self.n.value(), self.botWidth.value(), self.rightSS.value(), self.leftSS.value())
+            outHeader += '\n'*5 + 'Type:\tTrapezoidal Channel\nUnits:\t{0}\nChannel Slope:\t{1:.06f}\nMannings n:\t{2:.02f}\nBottom Width:\t{3:.02f}\nRight Side Slope:\t{4:.02f}\nLeft Side Slope:\t{5:.02f}\n'.format(self.units, self.slope.value(), self.n.value(), self.botWidth.value(), self.rightSS.value(), self.leftSS.value())
             outFile.write(outHeader)
             wseMax = self.depth.value()
             wseMin = 0.0
