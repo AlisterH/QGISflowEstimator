@@ -7,7 +7,7 @@
                              -------------------
         begin                : 2015-05-21
         git sha              : $Format:%H$
-        copyright            : (C) 2015 by M. Weier - North Dakota State Water Commision
+        copyright            : (C) 2015 by M. Weier - North Dakota State Water Commission
         email                : mweier@nd.gov
  ***************************************************************************/
 
@@ -63,6 +63,8 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
         self.btnClose = self.buttonBox.button(QtGui.QDialogButtonBox.Close) 
         self.btnBrowse.clicked.connect(self.writeDirName)
         self.btnLoadTXT.clicked.connect(self.loadTxt)
+		# ajh trying to make it work
+        #self.inputFile.textChanged.connect(self.run)
         self.btnSampleLine.setEnabled(False)
         self.btnSampleSlope.setEnabled(False)
         self.calcType = 'Trap'
@@ -101,6 +103,8 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
         self.ft.clicked.connect(self.run)
         self.m.clicked.connect(self.run)
         self.cbUDwse.valueChanged.connect(self.run)
+        #ajh: this doesn't fix it
+        #self.btnRefresh.clicked.connect(self.run)
 
         self.manageGui() 
      
@@ -178,6 +182,7 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
             
             try:
                 self.calcType = 'UD'
+                #print 'self.cbUDwse.value(), self.n.value(), self.slope.value(), staElev = self.staElev, units = self.units'
                 self.args = flowEstimator(self.cbUDwse.value(), self.n.value(), self.slope.value(), staElev = self.staElev, units = self.units)
                 self.plotter()
             except:
@@ -187,7 +192,10 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
    
     def sampleLine(self):
         try:
-            self.deactivate()
+            # ajh: this doesn't seem to do anything on Windows
+			self.iface.deactivate()
+			# ajh: this causes an error
+            #self.iface.mainWindow.setWindowState(Qt.WindowNoState)
         except:
             pass
         self.btnSampleLine.setEnabled(False)  
@@ -218,7 +226,7 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
         else:
             self.tool = ProfiletoolMapTool(self.canvas, self.btnSampleSlope)        #the mouselistener
         self.pointstoDraw = None    #Polyline in mapcanvas CRS analysed
-        self.dblclktemp = False        #enable disctinction between leftclick and doubleclick
+        self.dblclktemp = False        #enable distinction between leftclick and doubleclick
         self.selectionmethod = 0                        #The selection method defined in option
         self.saveTool = self.canvas.mapTool()            #Save the standard mapttool for restoring it at the end
         self.textquit0 = "Click for polyline and double click to end (right click to cancel then quit)"
@@ -278,6 +286,13 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
                 self.rubberband.reset(self.polygon)
             else:
                 self.cleaning()
+                # ajh: need this otherwise the plugin needs to be restarted to reenable the button
+                if self.sampleBtnCode == 'sampleLine':
+                    self.btnSampleLine.setEnabled(True)
+                else :
+                    self.btnSampleSlope.setEnabled(True) 
+                # ajh: need to raise the window
+                self.activateWindow()
 
 
 
@@ -310,6 +325,7 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
                 self.staElev, error = self.doRubberbandProfile()
                 if error:
                     self.deactivate()
+					#ajh it would be good to restart the selection again after an error
                 else:
                     self.doIrregularProfileFlowEstimator()
                 self.btnSampleLine.setEnabled(True) 
@@ -318,6 +334,7 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
                 staElev, error = self.doRubberbandProfile()
                 if error:
                     self.deactivate()
+					#ajh it would be good to restart the selection again after an error
                 else:
                     self.doRubberbandSlopeEstimator(staElev)     
                 self.btnSampleSlope.setEnabled(True) 
@@ -329,7 +346,19 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
             #temp point to distinct leftclick and dbleclick
             self.dblclktemp = newPoints
             self.iface.mainWindow().statusBar().showMessage(self.textquit0)
-            self.iface.mainWindow().activateWindow()
+
+            # ajh trying to make something like this work:
+            #self.iface.mainWindow.setWindowState(self.iface.mainWindow.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+            #self.iface.mainWindow.raise_()
+            #self.iface.mainWindow.show()
+            
+            # ajh: thought this just wasn't working on windows as per
+            # https://stackoverflow.com/questions/22815608/how-to-find-the-active-pyqt-window-and-bring-it-to-the-front
+            # see https://forum.qt.io/topic/1939/activatewindow-does-not-send-window-to-front/11
+            #self.iface.mainWindow.activateWindow()
+            
+            # but actually, this is the solution:
+            self.activateWindow()
             return
 
 
@@ -482,6 +511,8 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
             self.calcType = 'UD' 
             self.doIrregularProfileFlowEstimator()
         except:
+            if (filePath == ('')): # null string for cancel
+                return
             QMessageBox.warning(self,'Error',
                                 'Please check that the text file is space or tab delimited and does not contain header information')
         

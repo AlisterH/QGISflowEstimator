@@ -54,8 +54,9 @@ class ProfiletoolMapTool(QgsMapTool):
     def activate(self):
         QgsMapTool.activate(self)
         self.canvas.setCursor(self.cursor)
-        self.button.setCheckable(True)
-        self.button.setChecked(True)
+		# ajh: I don't think this is necessary.  You could say that it indicates the button has been used, but that doesn't mean the graph is necessarily showing output matching it (the user could have subsequently used Trapezoidal Channel etc)
+        #self.button.setCheckable(True)
+        #self.button.setChecked(True)
 
 
     def deactivate(self):
