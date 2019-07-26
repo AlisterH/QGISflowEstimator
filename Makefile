@@ -5,7 +5,7 @@
 #							 -------------------
 #		begin				: 2015-05-21
 #		git sha				: $Format:%H$
-#		copyright			: (C) 2015 by M. Weier - North Dakota State Water Commision
+#		copyright			: (C) 2015 by M. Weier - North Dakota State Water Commission
 #		email				: mweier@nd.gov
 # ***************************************************************************/
 #

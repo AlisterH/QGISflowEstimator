@@ -220,7 +220,7 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
      
         print 'rubberband ' 
         self.canvas = self.iface.mapCanvas()
-        #Init classe variables
+        #Init class variables
         if self.sampleBtnCode=='sampleLine':
             self.tool = ProfiletoolMapTool(self.canvas, self.btnSampleLine)        #the mouselistener
         else:

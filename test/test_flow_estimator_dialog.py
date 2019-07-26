@@ -10,7 +10,7 @@
 
 __author__ = 'mweier@nd.gov'
 __date__ = '2015-05-21'
-__copyright__ = 'Copyright 2015, M. Weier - North Dakota State Water Commision'
+__copyright__ = 'Copyright 2015, M. Weier - North Dakota State Water Commission'
 
 import unittest
 

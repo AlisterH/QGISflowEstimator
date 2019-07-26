@@ -6,7 +6,7 @@
  Estimates steady, uniform flow using the Manning equation for trapezoidal and DEM sampled channels.
                              -------------------
         begin                : 2015-05-21
-        copyright            : (C) 2015 by M. Weier - North Dakota State Water Commision
+        copyright            : (C) 2015 by M. Weier - North Dakota State Water Commission
         email                : mweier@nd.gov
         git sha              : $Format:%H$
  ***************************************************************************/
