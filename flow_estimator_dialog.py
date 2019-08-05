@@ -538,7 +538,6 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
              wseMax = self.cbWSE.value()
              wseMin = self.cbWSE.minimum()
         elif self.calcType =='UD':
-             proj4 = utils.getRasterLayerByName(self.cbDEM.currentText().split(' EPSG')[0]).crs().toProj4()
              outHeader += '\n'*5 + 'Type:\tUser Defined Cross Section\nUnits:\t{0}\nChannel Slope:\t{1:.06f}\nMannings n:\t{2:.02f}\n\n\n\nstation\televation\n'.format(self.units, self.slope.value(), self.n.value())
              outFile.write(outHeader)
              np.savetxt(outFile, self.staElev, fmt = '%.3f', delimiter = '\t')
