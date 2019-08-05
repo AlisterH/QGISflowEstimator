@@ -10,7 +10,7 @@ import numpy as np
 
 def channelBuilder(wsDepth, rightSS, leftSS, widthBottom):
     """
-    Builds trapziodal channel station/elevation array given depth, 
+    Builds trapezoidal channel station/elevation array given depth, 
     right side slope, left side slope, and bottom width
     """
     leftToe = wsDepth*1.25*leftSS
@@ -55,7 +55,7 @@ def channelPerimeter(corners):
 def flowEstimator(wsElev, n, channelSlope, **kwargs):
     """
     Estimates uniform flow using the Manning equation for
-    a user defined trapziodal channel or a manually defined channel using
+    a user defined trapezoidal channel or a manually defined channel using
     a station/elevation file 
     """
     if kwargs.get("elevFile") is not None:
