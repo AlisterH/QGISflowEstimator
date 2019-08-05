@@ -587,5 +587,5 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
 		#ajh this may help force the file lock to be released
         outFile = None
         
-        self.iface.messageBar().pushMessage("Flow Estimator", 'Output files located here {}.  Please delete when finished'.format(outPath),duration=30)
+        self.iface.messageBar().pushMessage("Flow Estimator", 'Output files saved to {}'.format(outPath),duration=30)
 
