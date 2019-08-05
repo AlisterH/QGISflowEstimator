@@ -528,6 +528,10 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
                 os.makedirs(outPath)             
         os.chdir(outPath)
         fileName = 'FlowEstimatorResults.txt'
+        # ajh not sure how to reliably reproduce, but on Windows it seems sometimes a lock is kept on the file until QGIS is closed
+        # one way to prevent it may be to open like this:
+        # outFile = open(fileName, 'w', False)
+        # another way may be to do outFile = None after closing
         outFile = open(fileName,'w') 
         outHeader = '*'*20 + '\nFlow Estimator - A QGIS plugin\nEstimates uniform, steady flow in a channel using Mannings equation\n' + '*'*20
         if self.calcType == 'DEM':
@@ -580,6 +584,8 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
         
         
         outFile.close()
+		#ajh this may help force the file lock to be released
+        outFile = None
         
         self.iface.messageBar().pushMessage("Flow Estimator", 'Output files located here {}.  Please delete when finished'.format(outPath),duration=30)
 
