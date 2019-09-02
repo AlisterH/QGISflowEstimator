@@ -194,6 +194,8 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
         try:
             # ajh: this doesn't seem to do anything on Windows
 			self.iface.deactivate()
+            # ajh: neither does this!
+			#self.iface.showMinimized()
 			# ajh: this causes an error
             #self.iface.mainWindow.setWindowState(Qt.WindowNoState)
         except:
@@ -462,7 +464,8 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
         else:
             return
 
-        self.run()
+        # ajh: I don't think this was doing anything
+        #self.run()
 
         
     def doRubberbandSlopeEstimator(self, staElev):
@@ -524,8 +527,9 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
         if outPath == '':
             outPath = os.path.join(home,'Desktop','QGIS2FlowEstimatorFiles')
             self.outputDir.setText(outPath)
-            if not os.path.exists(outPath):
-                os.makedirs(outPath)             
+        # Note that in Python 3.2+ we will be able to just do: os.makedirs("path/to/directory", exist_ok=True)					
+        if not os.path.exists(outPath):
+            os.makedirs(outPath)      
         os.chdir(outPath)
         fileName = 'FlowEstimatorResults.txt'
         # ajh not sure how to reliably reproduce, but on Windows it seems sometimes a lock is kept on the file until QGIS is closed
