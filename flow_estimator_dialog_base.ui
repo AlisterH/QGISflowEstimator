@@ -551,7 +551,7 @@ p, li { white-space: pre-wrap; }
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="standardButtons">
-        <set>QDialogButtonBox::Close|QDialogButtonBox::Ok</set>
+        <set>QDialogButtonBox::Close|QDialogButtonBox::Save</set>
        </property>
       </widget>
      </item>

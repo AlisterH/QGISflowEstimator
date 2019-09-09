@@ -58,8 +58,9 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
         self.iface = iface
         self.setupUi(self)
         
-        self.btnOk = self.buttonBox.button(QtGui.QDialogButtonBox.Ok)
-        self.btnOk.setText("Save Data")
+        self.btnOk = self.buttonBox.button(QtGui.QDialogButtonBox.Save)
+        #ajh: it seems this wasn't working, so I have changed from a stock OK button to a stock Save button
+		#self.btnOk.setText("Save Data")
         self.btnClose = self.buttonBox.button(QtGui.QDialogButtonBox.Close) 
         self.btnBrowse.clicked.connect(self.writeDirName)
         self.btnLoadTXT.clicked.connect(self.loadTxt)
