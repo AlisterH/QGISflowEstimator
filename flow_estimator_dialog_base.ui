@@ -148,7 +148,7 @@
                  <double>5.000000000000000</double>
                 </property>
                 <property name="decimals">
-                 <number>3</number>
+                 <number>4</number>
                 </property>
                </widget>
               </item>
@@ -424,13 +424,13 @@
              <item row="0" column="3">
               <widget class="QDoubleSpinBox" name="slope">
                <property name="decimals">
-                <number>5</number>
+                <number>3</number>
                </property>
                <property name="minimum">
                 <double>0.000000000000000</double>
                </property>
                <property name="singleStep">
-                <double>0.001000000000000</double>
+                <double>0.005000000000000</double>
                </property>
                <property name="value">
                 <double>0.0050000000000000</double>
