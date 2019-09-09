@@ -72,7 +72,7 @@ def flowEstimator(wsElev, n, channelSlope, **kwargs):
     if kwargs.get("units") == "m":
         const = 1.0
     else:
-        const = 1.49
+        const = 1.4859
     
     intersectList = []
     for i in range(0, len(staElev)):
