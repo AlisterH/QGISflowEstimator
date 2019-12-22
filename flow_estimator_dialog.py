@@ -20,22 +20,31 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import print_function
+from __future__ import absolute_import
 
+from builtins import str
+from builtins import zip
+from builtins import range
 import os
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtGui import QColor, QDialog, QMessageBox, QFileDialog
-from PyQt4.QtCore import Qt, SIGNAL, QObject
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import QDialog, QMessageBox, QFileDialog, QDialogButtonBox
+from qgis.PyQt.QtCore import Qt, QObject
 from qgis.gui import QgsRubberBand
-from qgis.core import QGis, QgsPoint
+try:
+    from qgis.core import QgsPointXY, QgsWkbTypes
+except:
+    from qgis.core import QGis, QgsPoint as QgsPointXY
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from matplotlib.ticker import ScalarFormatter
 
-import FlowEstimator_utils as utils
-from openChannel import flowEstimator
-from ptmaptool import ProfiletoolMapTool
+from . import FlowEstimator_utils as utils
+from .openChannel import flowEstimator
+from .ptmaptool import ProfiletoolMapTool
 
 from shapely.geometry import LineString
 import numpy as np
@@ -45,7 +54,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'flow_estimator_dialog_base.ui'))
 
 
-class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
+class FlowEstimatorDialog(QDialog, FORM_CLASS):
     def __init__(self, iface, parent=None):
         """Constructor."""
         super(FlowEstimatorDialog, self).__init__(parent)
@@ -58,10 +67,10 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
         self.iface = iface
         self.setupUi(self)
         
-        self.btnOk = self.buttonBox.button(QtGui.QDialogButtonBox.Save)
+        self.btnOk = self.buttonBox.button(QDialogButtonBox.Save)
         #ajh: it seems this wasn't working, so I have changed from a stock OK button to a stock Save button
 		#self.btnOk.setText("Save Data")
-        self.btnClose = self.buttonBox.button(QtGui.QDialogButtonBox.Close) 
+        self.btnClose = self.buttonBox.button(QDialogButtonBox.Close) 
         self.btnBrowse.clicked.connect(self.writeDirName)
         self.btnLoadTXT.clicked.connect(self.loadTxt)
 		# ajh trying to make it work
@@ -115,7 +124,8 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
 
 
     def manageGui(self):
-        print 'manageGui'
+        # fix_print_with_import
+        print('manageGui')
         self.cbDEM.clear()
         if utils.getRasterLayerNames():
             self.cbDEM.addItems(utils.getRasterLayerNames())
@@ -167,7 +177,8 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
             self.units = 'm'
             
         if self.tabWidget.currentIndex() == 0:
-            print 'calc trap channel'
+            # fix_print_with_import
+            print('calc trap channel')
             self.calcType = 'Trap'
             self.args = flowEstimator(self.depth.value(), self.n.value(), self.slope.value(), widthBottom = self.botWidth.value(), rightSS = self.rightSS.value(), leftSS = self.leftSS.value(), units = self.units)
             self.plotter()
@@ -194,7 +205,7 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
     def sampleLine(self):
         try:
             # ajh: this doesn't seem to do anything on Windows
-			self.iface.deactivate()
+            self.iface.deactivate()
             # ajh: neither does this!
 			#self.iface.showMinimized()
 			# ajh: this causes an error
@@ -208,10 +219,7 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
  
         
     def sampleSlope(self):
-        try:
-            self.deactivate()
-        except:
-            pass
+        self.deactivate()
         self.btnSampleSlope.setEnabled(False) 
         self.sampleBtnCode = 'sampleSlope'
         self.rubberBand()
@@ -221,7 +229,8 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
 #==============================================================================
     def rubberBand(self):
      
-        print 'rubberband ' 
+        # fix_print_with_import
+        print('rubberband ') 
         self.canvas = self.iface.mapCanvas()
         #Init class variables
         if self.sampleBtnCode=='sampleLine':
@@ -267,21 +276,21 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
             if len(self.pointstoDraw) > 0:
                 #Get mouse coords
                 mapPos = self.canvas.getCoordinateTransform().toMapCoordinates(position["x"],position["y"])
-                #Draw on temp layer
-                if QGis.QGIS_VERSION_INT >= 10900:
+                try:
+                    self.rubberband.reset(QgsWkbTypes.LineGeometry)
+                except:
                     self.rubberband.reset(QGis.Line)
-                else:
-                    self.rubberband.reset(self.polygon)
                 for i in range(0,len(self.pointstoDraw)):
-                     self.rubberband.addPoint(QgsPoint(self.pointstoDraw[i][0],self.pointstoDraw[i][1]))
-                self.rubberband.addPoint(QgsPoint(mapPos.x(),mapPos.y()))
+                     self.rubberband.addPoint(QgsPointXY(self.pointstoDraw[i][0],self.pointstoDraw[i][1]))
+                self.rubberband.addPoint(QgsPointXY(mapPos.x(),mapPos.y()))
 #        if self.selectionmethod == 1:
 #            return
 
 
 
     def rightClicked(self,position):    #used to quit the current action
-        print 'rightclicked'
+        # fix_print_with_import
+        print('rightclicked')
         if self.selectionmethod == 0:
             if len(self.pointstoDraw) > 0:
                 self.pointstoDraw = []
@@ -301,7 +310,8 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
 
 
     def leftClicked(self,position):        #Add point to analyse
-        print 'leftclicked'
+        # fix_print_with_import
+        print('leftclicked')
         mapPos = self.canvas.getCoordinateTransform().toMapCoordinates(position["x"],position["y"])
         newPoints = [[mapPos.x(), mapPos.y()]]
         if self.selectionmethod == 0:
@@ -315,7 +325,8 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
 
 
     def doubleClicked(self,position):
-        print 'doubleclicked'
+        # fix_print_with_import
+        print('doubleclicked')
         if self.selectionmethod == 0:
             #Validation of line
             mapPos = self.canvas.getCoordinateTransform().toMapCoordinates(position["x"],position["y"])
@@ -368,20 +379,24 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
 ###***********************************************
             
     def connectTool(self):
-        print 'connecting'
-        QObject.connect(self.tool, SIGNAL("moved"), self.moved)
+        # fix_print_with_import
+        print('connecting')
+        self.tool.moved.connect(self.moved)
 #        self.tool.moved.connect(self.moved)
-        QObject.connect(self.tool, SIGNAL("rightClicked"), self.rightClicked)
-        QObject.connect(self.tool, SIGNAL("leftClicked"), self.leftClicked)
-        QObject.connect(self.tool, SIGNAL("doubleClicked"), self.doubleClicked)
-        QObject.connect(self.tool, SIGNAL("deactivate"), self.deactivate)
+        self.tool.rightClicked.connect(self.rightClicked)
+        self.tool.leftClicked.connect(self.leftClicked)
+        self.tool.doubleClicked.connect(self.doubleClicked)
+#        self.tool.deactivate.connect(self.deactivate)
 
     def deactivate(self):        #enable clean exit of the plugin
         self.cleaning()
-        QObject.disconnect(self.tool, SIGNAL("moved"), self.moved)
-        QObject.disconnect(self.tool, SIGNAL("leftClicked"), self.leftClicked)
-        QObject.disconnect(self.tool, SIGNAL("rightClicked"), self.rightClicked)
-        QObject.disconnect(self.tool, SIGNAL("doubleClicked"), self.doubleClicked)
+        try:
+            self.tool.moved.disconnect(self.moved)
+            self.tool.leftClicked.disconnect(self.leftClicked)
+            self.tool.rightClicked.disconnect(self.rightClicked)
+            self.tool.doubleClicked.disconnect(self.doubleClicked)
+        except:
+            pass
 #        self.rubberband.reset(self.polygon)
 #        self.iface.mainWindow().statusBar().showMessage("")
         
@@ -416,7 +431,7 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
         xyzdList = utils.elevationSampler(line,self.xRes, layer)
         sta = xyzdList[-1]
         elev = xyzdList[-2]
-        staElev = np.array(zip(sta, elev))
+        staElev = np.array(list(zip(sta, elev)))
         try:
             np.isnan(np.sum(staElev[:,1]))
             return [staElev, None]
@@ -437,19 +452,13 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
             lbMaxEl = self.staElev[np.where(self.staElev[:,0]>thalweigX)][:,1].max()
         except:
             QMessageBox.warning(self,'Error', 'Channel not found')
-            try:
-                self.deactivate()
-            except:
-                pass
+            self.deactivate()
             return
         try:
             rbMaxEl = self.staElev[np.where(self.staElev[:,0]<thalweigX)][:,1].max()
         except:
             QMessageBox.warning(self,'Error', 'Channel not found')
-            try:
-                self.deactivate()
-            except:
-                pass
+            self.deactivate()
             return 
         maxElev = np.array([lbMaxEl,rbMaxEl]).min()-.01
         WSE = maxElev
@@ -472,7 +481,8 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
     def doRubberbandSlopeEstimator(self, staElev):
          
         slope = -(staElev[:,1][-1] - staElev[:,1][0])/staElev[:,0][-1]
-        print slope
+        # fix_print_with_import
+        print(slope)
 
         self.axes.clear()
         
@@ -484,16 +494,18 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
         self.axes.plot(x,y, label = 'Slope')
         self.axes.set_xlabel('Station, '+self.units)
         self.axes.set_ylabel('Elevation, '+self.units)
-        self.axes.set_title('DEM Derived Slope = '+slope.astype('|S8'))
+        #self.axes.set_title('DEM Derived Slope = '+str(slope))
+        self.axes.set_title('DEM Derived Slope = '+str(slope.astype('U8')))
         self.axes.legend()
         self.mplCanvas.draw()
         if slope<=0:
             QMessageBox.warning(self,'Error',
                                 'Negative or zero slope\nPlease check sampled area\n\nWater flows downhill you know!')
-            print 'error: negative slope'
+            # fix_print_with_import
+            print('error: negative slope')
         else:
             reply = QMessageBox.question(self,'Message',
-            'DEM Derived Slope is {}\nWould you like to use this value?'.format(slope.astype('|S8')), QMessageBox.Yes| 
+            'DEM Derived Slope is {}\nWould you like to use this value?'.format(str(slope.astype('U8'))), QMessageBox.Yes| 
             QMessageBox.No, QMessageBox.Yes)
             if reply == QMessageBox.Yes:
                 self.slope.setValue(slope)
@@ -507,8 +519,9 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
         self.outputDir.setText(self.dirName)
         
     def loadTxt(self):
-        filePath = QFileDialog.getOpenFileName(self, 'Select tab or space delimited text file containing station and elevation data')
-        print filePath
+        filePath, __ = QFileDialog.getOpenFileName(self, 'Select tab or space delimited text file containing station and elevation data')
+        # fix_print_with_import
+        print(filePath)
         try:
             self.staElev = np.loadtxt(filePath)
             self.inputFile.setText(filePath)
@@ -526,7 +539,7 @@ class FlowEstimatorDialog(QtGui.QDialog, FORM_CLASS):
         outPath = self.outputDir.text()
         home = os.path.expanduser("~")
         if outPath == '':
-            outPath = os.path.join(home,'Desktop','QGIS2FlowEstimatorFiles')
+            outPath = os.path.join(home,'Desktop','QGISFlowEstimatorFiles')
             self.outputDir.setText(outPath)
         # Note that in Python 3.2+ we will be able to just do: os.makedirs("path/to/directory", exist_ok=True)					
         if not os.path.exists(outPath):

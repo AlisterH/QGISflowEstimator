@@ -10,11 +10,11 @@
 
 __author__ = 'mweier@nd.gov'
 __date__ = '2015-05-21'
-__copyright__ = 'Copyright 2015, M. Weier - North Dakota State Water Commission'
+__copyright__ = 'Copyright 2015, M. Weier - North Dakota State Water Commision'
 
 import unittest
 
-from PyQt4.QtGui import QIcon
+from qgis.PyQt.QtGui import QIcon
 
 
 

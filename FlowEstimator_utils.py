@@ -20,9 +20,16 @@
  *                                                                         *
  ***************************************************************************/
  """
+from builtins import str
+from functools import cmp_to_key
 import locale
 
-from qgis.core import QgsMapLayerRegistry, QgsRaster, QgsMapLayer, QgsPoint
+from qgis.core import QgsRaster, QgsMapLayer
+
+try:
+    from qgis.core import QgsPointXY, QgsProject
+except:
+    from qgis.core import QgsPoint as QgsPointXY, QgsMapLayerRegistry as QgsProject
 
 def frange(start, end, step):
   while start < end:
@@ -31,17 +38,17 @@ def frange(start, end, step):
 
     
 def getRasterLayerNames():
-    layerMap = QgsMapLayerRegistry.instance().mapLayers()
+    layerMap = QgsProject.instance().mapLayers()
     layerNames = []
-    for name, layer in layerMap.iteritems():
+    for name, layer in list(layerMap.items()):
         if layer.type() == QgsMapLayer.RasterLayer and layer.providerType() != 'wms':
             srs = layer.crs().authid()
-            layerNames.append(unicode(layer.name()+' '+srs))
-    return sorted(layerNames, cmp=locale.strcoll)
+            layerNames.append(str(layer.name()+' '+srs))
+    return sorted(layerNames, key=cmp_to_key(locale.strcoll))
                 
 def getRasterLayerByName(layerName):
-    layerMap = QgsMapLayerRegistry.instance().mapLayers()
-    for name, layer in layerMap.iteritems():
+    layerMap = QgsProject.instance().mapLayers()
+    for name, layer in list(layerMap.items()):
         if layer.type() == QgsMapLayer.RasterLayer and layer.name() == layerName:
             if layer.isValid():
                 return layer
@@ -50,7 +57,7 @@ def getRasterLayerByName(layerName):
                 
 def valRaster(x,y,rLayer):
 
-    z = rLayer.dataProvider().identify(QgsPoint(x,y), QgsRaster.IdentifyFormatValue).results()[1]
+    z = rLayer.dataProvider().identify(QgsPointXY(x,y), QgsRaster.IdentifyFormatValue).results()[1]
     return z
     
 def calcElev(self):

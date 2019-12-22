@@ -4,7 +4,9 @@ Created on Tue May  5 16:26:25 2015
 
 @author: mweier
 """
+from __future__ import print_function
 #import matplotlib.pyplot as plt
+from builtins import range
 import numpy as np
 
 
@@ -65,14 +67,15 @@ def flowEstimator(wsElev, n, channelSlope, **kwargs):
     elif kwargs.get("widthBottom") and kwargs.get("rightSS") and kwargs.get("leftSS") > 0:
         staElev = channelBuilder(wsElev, kwargs.get("rightSS"), kwargs.get("leftSS"), kwargs.get("widthBottom"))
     else:
-        print """
+        # fix_print_with_import
+        print("""
         Whoops, wrong input
-        """
+        """)
         return
     if kwargs.get("units") == "m":
         const = 1.0
     else:
-        const = 1.4859
+        const = 1.49
     
     intersectList = []
     for i in range(0, len(staElev)):
@@ -87,7 +90,8 @@ def flowEstimator(wsElev, n, channelSlope, **kwargs):
     intersectArray = np.array(intersectList)
     intersectArray = intersectArray[intersectArray[:,0].argsort()]
     if len(intersectArray) > 2:
-        print 'more than two points intersect'
+        # fix_print_with_import
+        print('more than two points intersect')
         staMinElev = staElev[np.where(staElev[:,1]==min(staElev[:,1]))][0][0]
         startPoint = intersectArray[np.where(intersectArray[:,0]<staMinElev)][-1]
         endPoint = intersectArray[np.where(intersectArray[:,0]>staMinElev)][0]

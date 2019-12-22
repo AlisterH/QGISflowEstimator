@@ -7,18 +7,19 @@
      (at your option) any later version.
 
 """
+from __future__ import absolute_import
 
 __author__ = 'mweier@nd.gov'
 __date__ = '2015-05-21'
-__copyright__ = 'Copyright 2015, M. Weier - North Dakota State Water Commission'
+__copyright__ = 'Copyright 2015, M. Weier - North Dakota State Water Commision'
 
 import unittest
 
-from PyQt4.QtGui import QDialogButtonBox, QDialog
+from qgis.PyQt.QtWidgets import QDialogButtonBox, QDialog
 
 from flow_estimator_dialog import FlowEstimatorDialog
 
-from utilities import get_qgis_app
+from .utilities import get_qgis_app
 QGIS_APP = get_qgis_app()
 
 
