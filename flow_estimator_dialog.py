@@ -535,6 +535,8 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         
         
     def accept(self):
+        # recalculate in case save has been hit twice (otherwise instead of saving the cross-section png it saves a second copy of the rating curve).
+        self.run()
         # assign results to numpy array for quick csv dump
         outPath = self.outputDir.text()
         home = os.path.expanduser("~")
