@@ -1,17 +1,19 @@
 # This file contains metadata for your plugin. Since 
 # version 2.0 of QGIS this is the proper way to supply 
 # information about a plugin. The old method of 
-# embedding metadata in __init__.py will 
+# embedding metadata in __init__.py 
 # is no longer supported since version 2.0.
 
-# This file should be included when you package your plugin.# Mandatory items:
+# This file should be included when you package your plugin.
+
+# Mandatory items:
 
 [general]
 name=Flow Estimator
 qgisMinimumVersion=2.0
 qgisMaximumVersion=3.99
 description=Estimates steady, uniform flow using the Manning equation for trapezoidal and DEM sampled channels.  Intended for use by engineers and hydrologists.  Requires  numpy, and matplotlib libraires
-version=0.20
+version=0.21
 author=M. Weier - North Dakota State Water Commision
 email=mweier@nd.gov
 
@@ -23,6 +25,7 @@ about=Open channel hydraulics tool.  Estimates steady, uniform flow using the Ma
 
 # Uncomment the following line and add your changelog:
 changelog=
+		0.21 - support for QGIS 3.x, bugfixing and minor enhancements
 		0.20 - removed dependency on shapely library that was causing crashes
 		0.14 - fixed custom CRS bug to handle user defined CRS names
 		0.13 - fixed custom CRS bug
