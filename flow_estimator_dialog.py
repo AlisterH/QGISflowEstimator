@@ -203,15 +203,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             
    
     def sampleLine(self):
-        try:
-            # ajh: this doesn't seem to do anything on Windows
-            self.iface.deactivate()
-            # ajh: neither does this!
-			#self.iface.showMinimized()
-			# ajh: this causes an error
-            #self.iface.mainWindow.setWindowState(Qt.WindowNoState)
-        except:
-            pass
+        self.hide()
         self.btnSampleLine.setEnabled(False)  
         self.sampleBtnCode = 'sampleLine'
         self.rubberBand()
@@ -219,7 +211,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
  
         
     def sampleSlope(self):
-        self.deactivate()
+        self.hide()
         self.btnSampleSlope.setEnabled(False) 
         self.sampleBtnCode = 'sampleSlope'
         self.rubberBand()
@@ -365,6 +357,8 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             #self.iface.mainWindow.setWindowState(self.iface.mainWindow.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
             #self.iface.mainWindow.raise_()
             #self.iface.mainWindow.show()
+            # ah, this is it; needs a hide first
+            self.show()
             
             # ajh: thought this just wasn't working on windows as per
             # https://stackoverflow.com/questions/22815608/how-to-find-the-active-pyqt-window-and-bring-it-to-the-front
@@ -372,7 +366,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             #self.iface.mainWindow.activateWindow()
             
             # but actually, this is the solution:
-            self.activateWindow()
+            #self.activateWindow()
             return
 
 
