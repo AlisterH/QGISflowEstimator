@@ -204,7 +204,8 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
    
     def sampleLine(self):
         self.hide()
-        self.btnSampleLine.setEnabled(False)  
+	#ajh don't need this if we are doing hide and show; and it is a problem if the tool is deactivated
+        #self.btnSampleLine.setEnabled(False)  
         self.sampleBtnCode = 'sampleLine'
         self.rubberBand()
 
@@ -212,7 +213,8 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         
     def sampleSlope(self):
         self.hide()
-        self.btnSampleSlope.setEnabled(False) 
+	#ajh don't need this if we are doing hide and show; and it is a problem if the tool is deactivated
+        #self.btnSampleSlope.setEnabled(False) 
         self.sampleBtnCode = 'sampleSlope'
         self.rubberBand()
 #==============================================================================
@@ -319,6 +321,9 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
     def doubleClicked(self,position):
         # fix_print_with_import
         print('doubleclicked')
+	# ajh: doing show first avoids problems with dialog not showing in some cases after running slope estimator
+	# and it also means the user can see the graph before deciding whether to accept the slope
+        self.show()
         if self.selectionmethod == 0:
             #Validation of line
             mapPos = self.canvas.getCoordinateTransform().toMapCoordinates(position["x"],position["y"])
@@ -334,7 +339,8 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 					#ajh it would be good to restart the selection again after an error
                 else:
                     self.doIrregularProfileFlowEstimator()
-                self.btnSampleLine.setEnabled(True) 
+                #ajh don't need this if we are doing hide and show
+                #self.btnSampleLine.setEnabled(True) 
                 self.deactivate()
             else:
                 staElev, error = self.doRubberbandProfile()
@@ -342,8 +348,9 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
                     self.deactivate()
 					#ajh it would be good to restart the selection again after an error
                 else:
-                    self.doRubberbandSlopeEstimator(staElev)     
-                self.btnSampleSlope.setEnabled(True) 
+                    self.doRubberbandSlopeEstimator(staElev)
+                #ajh don't need this if we are doing hide and show 
+                #self.btnSampleSlope.setEnabled(True) 
                 self.deactivate()
 
             #Reset
@@ -353,12 +360,12 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             self.dblclktemp = newPoints
             self.iface.mainWindow().statusBar().showMessage(self.textquit0)
 
-            # ajh trying to make something like this work:
+            # ajh: trying to make something like this work:
             #self.iface.mainWindow.setWindowState(self.iface.mainWindow.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
             #self.iface.mainWindow.raise_()
             #self.iface.mainWindow.show()
-            # ah, this is it; needs a hide first
-            self.show()
+            # ajh: this is (really) it; needs a hide first... but we are moving it to the start as discussed there
+            #self.show()
             
             # ajh: thought this just wasn't working on windows as per
             # https://stackoverflow.com/questions/22815608/how-to-find-the-active-pyqt-window-and-bring-it-to-the-front
@@ -376,11 +383,10 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         # fix_print_with_import
         print('connecting')
         self.tool.moved.connect(self.moved)
-#        self.tool.moved.connect(self.moved)
         self.tool.rightClicked.connect(self.rightClicked)
         self.tool.leftClicked.connect(self.leftClicked)
         self.tool.doubleClicked.connect(self.doubleClicked)
-#        self.tool.deactivate.connect(self.deactivate)
+        self.tool.deactivated.connect(self.show)
 
     def deactivate(self):        #enable clean exit of the plugin
         self.cleaning()
