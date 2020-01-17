@@ -280,7 +280,10 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 #        if self.selectionmethod == 1:
 #            return
 
-
+    def tooldeactivated(self):
+        self.rubberband.reset(self.polygon)
+        self.iface.mainWindow().statusBar().showMessage( "" )
+        self.show()
 
     def rightClicked(self,position):    #used to quit the current action
         # fix_print_with_import
@@ -386,7 +389,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         self.tool.rightClicked.connect(self.rightClicked)
         self.tool.leftClicked.connect(self.leftClicked)
         self.tool.doubleClicked.connect(self.doubleClicked)
-        self.tool.deactivated.connect(self.show)
+        self.tool.deactivated.connect(self.tooldeactivated)
 
     def deactivate(self):        #enable clean exit of the plugin
         self.cleaning()
@@ -395,6 +398,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             self.tool.leftClicked.disconnect(self.leftClicked)
             self.tool.rightClicked.disconnect(self.rightClicked)
             self.tool.doubleClicked.disconnect(self.doubleClicked)
+            self.tool.deactivated.disconnect(self.tooldeactivated)
         except:
             pass
 #        self.rubberband.reset(self.polygon)
@@ -415,7 +419,6 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         self.canvas.unsetMapTool(self.tool)
         self.canvas.setMapTool(self.saveTool)
         self.rubberband.reset(self.polygon)
-        #self.rubberband.reset(self.polygon)
         self.iface.mainWindow().statusBar().showMessage( "" )
 #==============================================================================
 # END rubberband and related functions from
