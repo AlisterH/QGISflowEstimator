@@ -34,12 +34,13 @@ from qgis.core import *
 from qgis.gui import *
 import qgis
 
-from .selectlinetool import SelectLineTool
+# ajh: we are still not using this or class ProfiletoolMapToolRenderer from upstream
+#from .selectlinetool import SelectLineTool
 
 
-# this file was synced with the profiletool upstream for the QGIS port in Jan 2020, but we haven't refactored as they have,
-# so leave out for now
-#class ProfiletoolMapToolRenderer()
+
+
+
 
 
 
