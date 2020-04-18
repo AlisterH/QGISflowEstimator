@@ -38,7 +38,12 @@ try:
 except:
     from qgis.core import QGis, QgsPoint as QgsPointXY
 
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+# ajh: I gather we should code it like this, although for some reason qt4agg seems to work the same in QGIS3
+from matplotlib.backends.qt_compat import is_pyqt5
+if is_pyqt5():
+    from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+else:
+    from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from matplotlib.ticker import ScalarFormatter
 
@@ -69,11 +74,11 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         
         self.btnOk = self.buttonBox.button(QDialogButtonBox.Save)
         #ajh: it seems this wasn't working, so I have changed from a stock OK button to a stock Save button
-		#self.btnOk.setText("Save Data")
+        #self.btnOk.setText("Save Data")
         self.btnClose = self.buttonBox.button(QDialogButtonBox.Close) 
         self.btnBrowse.clicked.connect(self.writeDirName)
         self.btnLoadTXT.clicked.connect(self.loadTxt)
-		# ajh trying to make it work
+        # ajh trying to make it work
         #self.inputFile.textChanged.connect(self.run)
         self.btnSampleLine.setEnabled(False)
         self.btnSampleSlope.setEnabled(False)
@@ -82,7 +87,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         # add matplotlib figure to dialog
         self.figure = Figure()
         self.axes = self.figure.add_subplot(111)
-        self.figure.subplots_adjust(left=.1, bottom=0.15, right=.78, top=.9, wspace=None, hspace=.2)
+        self.figure.subplots_adjust(left=.12, bottom=0.15, right=.75, top=.9, wspace=None, hspace=.2)
         self.mplCanvas = FigureCanvas(self.figure)
         
         
@@ -92,7 +97,20 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         self.vLayout.addWidget(self.mplCanvas)
         self.vLayout.minimumSize() 
         #self.vLayout.addWidget(self.widgetPlotToolbar)
-        self.figure.patch.set_visible(False)
+
+        # ajh: change the colours; perhaps we could use a stylesheet instead
+        # ajh: can change the colour outside the actual graph like this
+        #self.figure.patch.set_facecolor("blue")
+        # ajh: default transparency is 1.0; good since otherwise the exported graphs have illegible axes in Windows explorer preview due to being fully transparent, and in QGIS if using a dark theme.
+        #self.figure.patch.set_alpha(0.5)
+		# ajh: patch (fill) is shown by default; good as per comment above
+        #self.figure.patch.set_visible(False)
+        # ajh: can change the background colour of the main plot like this:
+        #self.axes.set_facecolor("#eafff5")
+		# ajh: these don't seem to do anything
+        #self.axes.patch.set_facecolor("#eafff5")
+        #self.axes.patch.set_visible(True)
+        #self.axes.patch.set_alpha(0.0)
         
         
         # and configure matplotlib params
@@ -113,11 +131,14 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         self.ft.clicked.connect(self.run)
         self.m.clicked.connect(self.run)
         self.cbUDwse.valueChanged.connect(self.run)
-        #ajh: this doesn't fix it
+        # ajh: this doesn't fix it
         #self.btnRefresh.clicked.connect(self.run)
 
         self.manageGui() 
-     
+        # ajh: I thought this would work around the crashes, but it doesn't work properly - it only sets a maximum size (almost - it can still be made slightly taller!)
+		#self.setFixedSize(self.size())
+		# even this doesn't help
+        #self.setMinimumSize(self.size())
         self.btnSampleLine.clicked.connect(self.sampleLine)
         self.btnSampleSlope.clicked.connect(self.sampleSlope)
 
@@ -165,7 +186,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
     
     def refreshPlotText(self):
 
-        self.axes.annotate(self.outText, xy=(.8,0.17), xycoords='figure fraction')
+        self.axes.annotate(self.outText, xy=(.76,0.17), xycoords='figure fraction')
         #at.patch.set_boxstyle("round,pad=0.,rounding_size=0.2")
         #self.axes.add_artist(at)
         self.mplCanvas.draw()
@@ -204,7 +225,8 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
    
     def sampleLine(self):
         self.hide()
-	#ajh don't need this if we are doing hide and show; and it is a problem if the tool is deactivated
+        self.iface.mainWindow().activateWindow()
+    #ajh don't need this if we are doing hide and show; and it is a problem if the tool is deactivated
         #self.btnSampleLine.setEnabled(False)  
         self.sampleBtnCode = 'sampleLine'
         self.rubberBand()
@@ -213,7 +235,8 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         
     def sampleSlope(self):
         self.hide()
-	#ajh don't need this if we are doing hide and show; and it is a problem if the tool is deactivated
+        self.iface.mainWindow().activateWindow()
+    #ajh don't need this if we are doing hide and show; and it is a problem if the tool is deactivated
         #self.btnSampleSlope.setEnabled(False) 
         self.sampleBtnCode = 'sampleSlope'
         self.rubberBand()
@@ -233,9 +256,10 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             self.tool = ProfiletoolMapTool(self.canvas, self.btnSampleSlope)        #the mouselistener
         self.pointstoDraw = None    #Polyline in mapcanvas CRS analysed
         self.dblclktemp = False        #enable distinction between leftclick and doubleclick
+        # ajh: we would need to do more work to support selectionmethod = 1
         self.selectionmethod = 0                        #The selection method defined in option
         self.saveTool = self.canvas.mapTool()            #Save the standard mapttool for restoring it at the end
-        self.textquit0 = "Click for polyline and double click to end (right click to cancel then quit)"
+        self.textquit0 = "Click for polyline and double click to end (right click to cancel)"
         self.textquit1 = "Select the polyline in a vector layer (Right click to quit)"
         #Listeners of mouse
         self.connectTool()
@@ -250,7 +274,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         else:
             color = Qt.blue
         self.rubberband.setColor(QColor(color))
-        #init the table where is saved the poyline
+        #init the table where is saved the polyline
         self.pointstoDraw = []
         self.pointstoCal = []
         self.lastClicked = [[-9999999999.9,9999999999.9]]
@@ -295,13 +319,15 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
                 self.rubberband.reset(self.polygon)
             else:
                 self.cleaning()
+                # ajh2: don't actually need this now, as we hide the window instead of deactivating the button
                 # ajh: need this otherwise the plugin needs to be restarted to reenable the button
-                if self.sampleBtnCode == 'sampleLine':
-                    self.btnSampleLine.setEnabled(True)
-                else :
-                    self.btnSampleSlope.setEnabled(True) 
+                #if self.sampleBtnCode == 'sampleLine':
+                #    self.btnSampleLine.setEnabled(True)
+                #else :
+                #    self.btnSampleSlope.setEnabled(True) 
+                # ajh2: don't seem to need this now
                 # ajh: need to raise the window
-                self.activateWindow()
+                #self.activateWindow()
 
 
 
@@ -324,8 +350,8 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
     def doubleClicked(self,position):
         # fix_print_with_import
         print('doubleclicked')
-	# ajh: doing show first avoids problems with dialog not showing in some cases after running slope estimator
-	# and it also means the user can see the graph before deciding whether to accept the slope
+    # ajh: doing show first avoids problems with dialog not showing in some cases after running slope estimator
+    # and it also means the user can see the graph before deciding whether to accept the slope
         self.show()
         if self.selectionmethod == 0:
             #Validation of line
@@ -338,20 +364,20 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             if self.sampleBtnCode == 'sampleLine':
                 self.staElev, error = self.doRubberbandProfile()
                 if error:
-                    self.deactivate()
-					#ajh it would be good to restart the selection again after an error
+                    pass
+                    #ajh it would be good to restart the selection again after an error
                 else:
                     self.doIrregularProfileFlowEstimator()
                 #ajh don't need this if we are doing hide and show
                 #self.btnSampleLine.setEnabled(True) 
                 self.deactivate()
             else:
-                staElev, error = self.doRubberbandProfile()
+                self.staElev, error = self.doRubberbandProfile()
                 if error:
-                    self.deactivate()
-					#ajh it would be good to restart the selection again after an error
+                    pass
+                    #ajh it would be good to restart the selection again after an error
                 else:
-                    self.doRubberbandSlopeEstimator(staElev)
+                    self.doRubberbandSlopeEstimator(self.staElev)
                 #ajh don't need this if we are doing hide and show 
                 #self.btnSampleSlope.setEnabled(True) 
                 self.deactivate()
@@ -361,7 +387,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             self.pointstoDraw = []
             #temp point to distinct leftclick and dbleclick
             self.dblclktemp = newPoints
-            self.iface.mainWindow().statusBar().showMessage(self.textquit0)
+            self.iface.mainWindow().statusBar().showMessage( "" )
 
             # ajh: trying to make something like this work:
             #self.iface.mainWindow.setWindowState(self.iface.mainWindow.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
@@ -415,11 +441,11 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 #        self.m.setEnabled(True)
 #        self.cbDEM.setEnabled(True)
 
-    def cleaning(self):            #used on right click
+    def cleaning(self):            #used on right click and deactivate
         self.canvas.unsetMapTool(self.tool)
         self.canvas.setMapTool(self.saveTool)
         self.rubberband.reset(self.polygon)
-        self.iface.mainWindow().statusBar().showMessage( "" )
+        self.iface.mainWindow().statusBar().showMessage( "" ) # ajh: I guess there might have been a statusBar message associated with the saveTool which we should restore
 #==============================================================================
 # END rubberband and related functions from
 #       https://github.com/etiennesky/profiletool
@@ -441,6 +467,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         except:
             QMessageBox.warning(self,'Error',
                                 'Sampled line not within bounds of DEM')
+            # ajh: don't think we need this
             #self.cleaning()
             
             return [staElev, 'error']
@@ -455,15 +482,17 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             lbMaxEl = self.staElev[np.where(self.staElev[:,0]>thalweigX)][:,1].max()
         except:
             QMessageBox.warning(self,'Error', 'Channel not found')
-            self.deactivate()
+            # ajh: don't think we need this
+            #self.deactivate()
             return
         try:
             rbMaxEl = self.staElev[np.where(self.staElev[:,0]<thalweigX)][:,1].max()
         except:
             QMessageBox.warning(self,'Error', 'Channel not found')
-            self.deactivate()
+            # ajh: don't think we need this
+            #self.deactivate()
             return 
-        maxElev = np.array([lbMaxEl,rbMaxEl]).min()-.01
+        maxElev = np.array([lbMaxEl,rbMaxEl]).min()-.001 # ajh: let the user set WSE up to 1mm (if units in m) below the crest
         WSE = maxElev
         WSE = (self.staElev[:,1].max() - self.staElev[:,1].min())/2. + self.staElev[:,1].min()
         if self.tabWidget.currentIndex() == 1:
@@ -546,37 +575,40 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         if outPath == '':
             outPath = os.path.join(home,'Desktop','QGISFlowEstimatorFiles')
             self.outputDir.setText(outPath)
-        # Note that in Python 3.2+ we will be able to just do: os.makedirs("path/to/directory", exist_ok=True)					
+        # Note that in Python 3.2+ we will be able to just do: os.makedirs("path/to/directory", exist_ok=True)                    
         if not os.path.exists(outPath):
-            os.makedirs(outPath)      
-        os.chdir(outPath)
-        fileName = 'FlowEstimatorResults.txt'
-        # ajh not sure how to reliably reproduce, but on Windows it seems sometimes a lock is kept on the file until QGIS is closed
+            os.makedirs(outPath)
+        fileName = outPath + '/FlowEstimatorResults.txt'
+        # ajh I think we've fixed the file/folder locking problem on windows by not doing chdir to outPath
+		# keeping these old comments just in case:
         # one way to prevent it may be to open like this:
         # outFile = open(fileName, 'w', False)
         # another way may be to do outFile = None after closing
-        outFile = open(fileName,'w') 
+        outFile =  open(fileName,'w')
         outHeader = '*'*20 + '\nFlow Estimator - A QGIS plugin\nEstimates uniform, steady flow in a channel using Mannings equation\n' + '*'*20
         if self.calcType == 'DEM':
-             proj4 = utils.getRasterLayerByName(self.cbDEM.currentText().split(' EPSG')[0]).crs().toProj4()
-             outHeader += '\n'*5 + 'Type:\tCross Section from DEM\nUnits:\t{0}\nDEM Layer:\t{1}\nProjection (Proj4 format):\t{2}\nChannel Slope:\t{3:.06f}\nMannings n:\t{4:.02f}\n\n\n\nstation\televation\n'.format(self.units,self.cbDEM.currentText(), proj4, self.slope.value(), self.n.value())
-             outFile.write(outHeader)
-             np.savetxt(outFile, self.staElev, fmt = '%.3f', delimiter = '\t')
-             wseMax = self.cbWSE.value()
-             wseMin = self.cbWSE.minimum()
+            try:
+               proj4 = utils.getRasterLayerByName(self.cbDEM.currentText().split(' EPSG')[0]).crs().toProj4()
+            except:
+               proj4 = "Unknown"
+            outHeader += '\n'*5 + 'Type:\tCross Section from DEM\nUnits:\t{0}\nDEM Layer:\t{1}\nProjection (Proj4 format):\t{2}\nChannel Slope:\t{3:.06f}\nMannings n:\t{4:.02f}\n\n\n\nstation\televation\n'.format(self.units,self.cbDEM.currentText(), proj4, self.slope.value(), self.n.value())
+            outFile.write(outHeader)
+            np.savetxt(outFile, self.staElev, fmt = '%.3f', delimiter = '\t')
+            wseMax = self.cbWSE.value()
+            wseMin = self.cbWSE.minimum()
         elif self.calcType =='UD':
-             outHeader += '\n'*5 + 'Type:\tUser Defined Cross Section\nUnits:\t{0}\nChannel Slope:\t{1:.06f}\nMannings n:\t{2:.02f}\n\n\n\nstation\televation\n'.format(self.units, self.slope.value(), self.n.value())
-             outFile.write(outHeader)
-             np.savetxt(outFile, self.staElev, fmt = '%.3f', delimiter = '\t')
-             wseMax = self.cbUDwse.value()
-             wseMin = self.cbUDwse.minimum()            
-            
+            outHeader += '\n'*5 + 'Type:\tUser Defined Cross Section\nUnits:\t{0}\nChannel Slope:\t{1:.06f}\nMannings n:\t{2:.02f}\n\n\n\nstation\televation\n'.format(self.units, self.slope.value(), self.n.value())
+            outFile.write(outHeader)
+            np.savetxt(outFile, self.staElev, fmt = '%.3f', delimiter = '\t')
+            wseMax = self.cbUDwse.value()
+            wseMin = self.cbUDwse.minimum()            
+        
         else:
             outHeader += '\n'*5 + 'Type:\tTrapezoidal Channel\nUnits:\t{0}\nChannel Slope:\t{1:.06f}\nMannings n:\t{2:.02f}\nBottom Width:\t{3:.02f}\nRight Side Slope:\t{4:.02f}\nLeft Side Slope:\t{5:.02f}\n'.format(self.units, self.slope.value(), self.n.value(), self.botWidth.value(), self.rightSS.value(), self.leftSS.value())
             outFile.write(outHeader)
             wseMax = self.depth.value()
             wseMin = 0.0
-        self.mplCanvas.print_figure('FlowEstimatorResultsXSFigure')
+        self.mplCanvas.print_figure(outPath + '/FlowEstimatorResultsXSFigure')
         outHeader = '\n\n\n\n\n\n\nwater surface elevation\tflow\tvelocity\tR\tarea\ttop width\tdepth\n'
         outFile.write(outHeader)
         ###do loop here 
@@ -593,7 +625,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             outFile.write(data)
             wseList.append(wse)
             qList.append(Q)
-            
+        
         self.axes.clear()
         formatter = ScalarFormatter(useOffset=False)
         self.axes.yaxis.set_major_formatter(formatter)
@@ -603,11 +635,11 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         self.axes.set_title('Rating Curve')
         self.axes.grid()
         self.mplCanvas.draw()
-        self.mplCanvas.print_figure('FlowEstimatorRatingCurve')          
-        
-        
+        self.mplCanvas.print_figure(outPath + '/FlowEstimatorRatingCurve')          
+    
+    
         outFile.close()
-		#ajh this may help force the file lock to be released
+        #ajh this may help force the file lock to be released
         outFile = None
         
         self.iface.messageBar().pushMessage("Flow Estimator", 'Output files saved to {}'.format(outPath),duration=30)
