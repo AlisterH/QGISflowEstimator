@@ -1,9 +1,4 @@
-# This file contains metadata for your plugin. Since 
-# version 2.0 of QGIS this is the proper way to supply 
-# information about a plugin. The old method of 
-# embedding metadata in __init__.py 
-# is no longer supported since version 2.0.
-
+# This file contains metadata for your plugin.
 # This file should be included when you package your plugin.
 
 # Mandatory items:
@@ -11,21 +6,21 @@
 [general]
 name=Flow Estimator
 qgisMinimumVersion=2.0
-qgisMaximumVersion=3.99
-description=Estimates steady, uniform flow using the Manning equation for trapezoidal and DEM sampled channels.  Intended for use by engineers and hydrologists.  Requires  numpy, and matplotlib libraires
+description=Open channel hydraulics tool.  Estimates steady, uniform flow using the Manning equation for trapezoidal and DEM sampled channels.
+about=Estimates steady, uniform flow using the Manning equation for trapezoidal and DEM sampled channels.  Intended for use by engineers and hydrologists.  Requires  numpy, and matplotlib libraries
 version=0.21
 author=M. Weier - North Dakota State Water Commision
 email=mweier@nd.gov
-
-about=Open channel hydraulics tool.  Estimates steady, uniform flow using the Manning equation for trapezoidal and DEM sampled channels.
+repository=https://github.com/msweier/QGISflowEstimator
 
 # End of mandatory metadata
 
 # Recommended items:
+qgisMaximumVersion=3.99
 
 # Uncomment the following line and add your changelog:
 changelog=
-		0.21 - support for QGIS 3.x, bugfixing and minor enhancements
+		0.21 - support for QGIS3 plus many bugfixes and minor enhancements
 		0.20 - removed dependency on shapely library that was causing crashes
 		0.14 - fixed custom CRS bug to handle user defined CRS names
 		0.13 - fixed custom CRS bug
@@ -37,8 +32,6 @@ tags=hydraulics, civil engineering, manning, stream, river, drainage, channel
 
 homepage=https://github.com/msweier/QGISflowEstimator
 tracker=https://github.com/msweier/QGISflowEstimator/issues
-repository=https://github.com/msweier/QGISflowEstimator
-category=Plugins
 icon=icon.png
 # experimental flag
 experimental=False
