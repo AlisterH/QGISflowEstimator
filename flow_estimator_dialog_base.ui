@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>616</width>
-    <height>644</height>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,23 +18,8 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="sizeConstraint">
-    <enum>QLayout::SetMinimumSize</enum>
+    <enum>QLayout::SetFixedSize</enum>
    </property>
-   <item>
-    <widget class="QWidget" name="widget_3" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>304</height>
-      </size>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
-      <item>
-       <layout class="QVBoxLayout" name="vLayout"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item>
     <widget class="QTabWidget" name="tabWidget_2">
      <property name="tabPosition">
@@ -63,6 +48,25 @@
        <property name="spacing">
         <number>0</number>
        </property>
+       <item row="0" column="0">
+        <layout class="QVBoxLayout" name="vLayout">
+         <item>
+          <widget class="QWidget" name="widget_3" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>304</height>
+            </size>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetFixedSize</enum>
+            </property>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item row="1" column="0">
         <widget class="QGroupBox" name="groupBox_2">
          <property name="maximumSize">
@@ -80,7 +84,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>164</height>
+              <height>0</height>
              </size>
             </property>
             <property name="currentIndex">
@@ -91,16 +95,10 @@
               <string>Trapezoidal Channel</string>
              </attribute>
              <layout class="QGridLayout" name="gridLayout_2">
-              <item row="1" column="4">
-               <widget class="QDoubleSpinBox" name="rightSS">
-                <property name="minimum">
-                 <double>0.010000000000000</double>
-                </property>
-                <property name="singleStep">
-                 <double>0.250000000000000</double>
-                </property>
-                <property name="value">
-                 <double>2.000000000000000</double>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>Water Depth</string>
                 </property>
                </widget>
               </item>
@@ -114,6 +112,32 @@
                 </property>
                 <property name="value">
                  <double>2.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="3">
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Right Side Slope (width/height ratio)</string>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QDoubleSpinBox" name="depth">
+                <property name="decimals">
+                 <number>4</number>
+                </property>
+                <property name="minimum">
+                 <double>0.010000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.050000000000000</double>
+                </property>
+                <property name="value">
+                 <double>5.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -136,46 +160,6 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="1">
-               <widget class="QDoubleSpinBox" name="depth">
-                <property name="decimals">
-                 <number>4</number>
-                </property>
-                <property name="minimum">
-                 <double>0.010000000000000</double>
-                </property>
-                <property name="singleStep">
-                 <double>0.050000000000000</double>
-                </property>
-                <property name="value">
-                 <double>5.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="3">
-               <widget class="QLabel" name="label">
-                <property name="text">
-                 <string>Bottom Width</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_3">
-                <property name="text">
-                 <string>Water Depth</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="3">
-               <widget class="QLabel" name="label_4">
-                <property name="text">
-                 <string>Right Side Slope (width/height ratio)</string>
-                </property>
-                <property name="wordWrap">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
               <item row="1" column="0">
                <widget class="QLabel" name="label_2">
                 <property name="text">
@@ -183,6 +167,26 @@
                 </property>
                 <property name="wordWrap">
                  <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="4">
+               <widget class="QDoubleSpinBox" name="rightSS">
+                <property name="minimum">
+                 <double>0.010000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.250000000000000</double>
+                </property>
+                <property name="value">
+                 <double>2.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="3">
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>Bottom Width</string>
                 </property>
                </widget>
               </item>
@@ -207,11 +211,11 @@
                   <property name="decimals">
                    <number>4</number>
                   </property>
-                  <property name="maximum">
-                   <double>999999.000000000000000</double>
-                  </property>
                   <property name="minimum">
                    <double>-999999.000000000000000</double>
+                  </property>
+                  <property name="maximum">
+                   <double>999999.000000000000000</double>
                   </property>
                   <property name="singleStep">
                    <double>0.050000000000000</double>
@@ -226,7 +230,14 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QComboBox" name="cbDEM"/>
+                 <widget class="QComboBox" name="cbDEM">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>100</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
@@ -325,20 +336,14 @@
                  </widget>
                 </item>
                 <item>
-                 <spacer name="horizontalSpacer_2">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                 <widget class="QLineEdit" name="inputFile">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>100</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
                   </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="inputFile"/>
+                 </widget>
                 </item>
                 <item>
                  <widget class="QToolButton" name="btnLoadTXT">
@@ -361,9 +366,134 @@
               <height>14</height>
              </size>
             </property>
-            <layout class="QGridLayout" name="gridLayout_3">
+            <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0" columnstretch="0,0,0,0,0,0">
+             <item row="1" column="0" colspan="6">
+              <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0,0,0">
+               <property name="sizeConstraint">
+                <enum>QLayout::SetDefaultConstraint</enum>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_12">
+                 <property name="text">
+                  <string>Output Directory</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="outputDir">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>100</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="baseSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="btnBrowse">
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDialogButtonBox" name="buttonBox">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="standardButtons">
+                  <set>QDialogButtonBox::Close|QDialogButtonBox::Save</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="0" column="3">
+              <widget class="QDoubleSpinBox" name="slope">
+               <property name="decimals">
+                <number>3</number>
+               </property>
+               <property name="minimum">
+                <double>0.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>0.005000000000000</double>
+               </property>
+               <property name="value">
+                <double>0.005000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="4">
+              <widget class="QLabel" name="label_6">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Manning's Roughness Coefficent</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+               <property name="indent">
+                <number>-1</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="5">
+              <widget class="QDoubleSpinBox" name="n">
+               <property name="decimals">
+                <number>3</number>
+               </property>
+               <property name="minimum">
+                <double>0.001000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>0.005000000000000</double>
+               </property>
+               <property name="value">
+                <double>0.040000000000000</double>
+               </property>
+              </widget>
+             </item>
              <item row="0" column="0">
               <widget class="QLabel" name="label_10">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Units</string>
                </property>
@@ -385,7 +515,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
+                <item row="0" column="1">
                  <widget class="QRadioButton" name="m">
                   <property name="text">
                    <string>m</string>
@@ -396,48 +526,6 @@
                  </widget>
                 </item>
                </layout>
-              </widget>
-             </item>
-             <item row="0" column="4">
-              <widget class="QLabel" name="label_6">
-               <property name="text">
-                <string>Manning's Roughness Coefficent</string>
-               </property>
-               <property name="wordWrap">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="5">
-              <widget class="QDoubleSpinBox" name="n">
-               <property name="decimals">
-                <number>3</number>
-               </property>
-               <property name="minimum">
-                <double>0.001000000000000</double>
-               </property>
-               <property name="singleStep">
-                <double>0.005000000000000</double>
-               </property>
-               <property name="value">
-                <double>0.040000000000000</double>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="3">
-              <widget class="QDoubleSpinBox" name="slope">
-               <property name="decimals">
-                <number>3</number>
-               </property>
-               <property name="minimum">
-                <double>0.000000000000000</double>
-               </property>
-               <property name="singleStep">
-                <double>0.005000000000000</double>
-               </property>
-               <property name="value">
-                <double>0.005000000000000</double>
-               </property>
               </widget>
              </item>
              <item row="0" column="2">
@@ -471,6 +559,9 @@
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
         <widget class="QTextBrowser" name="textBrowser">
+         <property name="autoFormatting">
+          <set>QTextEdit::AutoNone</set>
+         </property>
          <property name="html">
           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -482,13 +573,13 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt;&quot;&gt;This plugin calculates flow and velocity using the Manning equation for uniform, steady flow.  &lt;/span&gt;&lt;span style=&quot; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt; font-weight:600;&quot;&gt;If you've never heard of the Manning equation or taken a course in open channel hydraulics you won't understand what this tool is doing&lt;/span&gt;&lt;span style=&quot; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt;&quot;&gt;If you are familar with open channel hydraulics and want a quick refresher check out this information from the Univeristy of Delaware:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt;&quot;&gt;If you are familar with open channel hydraulics and want a quick refresher check out this information from the University of Delaware:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt;&quot;&gt;http://udel.edu/~inamdar/EGTE215/Open_channel.pdf&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://web.archive.org/web/20160305025907/udel.edu/~inamdar/EGTE215/Open_channel.pdf&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://web.archive.org/web/20160305025907/udel.edu/~inamdar/EGTE215/Open_channel.pdf&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt;&quot;&gt;A great reference for Mannings n values can be found from the USGS here:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt;&quot;&gt;http://pubs.usgs.gov/wsp/2339/report.pdf&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://pubs.usgs.gov/wsp/2339/report.pdf&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://pubs.usgs.gov/wsp/2339/report.pdf&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt; font-weight:600;&quot;&gt;User Defined Cross Section&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
@@ -504,61 +595,14 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'.Helvetica Neue DeskInterface'; font-size:13pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'.Helvetica Neue DeskInterface'; font-size:18pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
+         <property name="openExternalLinks">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
       </layout>
      </widget>
     </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="QLabel" name="label_12">
-       <property name="text">
-        <string>Output Directory</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="outputDir"/>
-     </item>
-     <item>
-      <widget class="QToolButton" name="btnBrowse">
-       <property name="text">
-        <string>...</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Close|QDialogButtonBox::Save</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
   </layout>
  </widget>
@@ -569,8 +613,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>leftSS</tabstop>
   <tabstop>rightSS</tabstop>
   <tabstop>ft</tabstop>
-  <tabstop>m</tabstop>
-  <tabstop>slope</tabstop>
   <tabstop>n</tabstop>
   <tabstop>cbWSE</tabstop>
   <tabstop>cbDEM</tabstop>
@@ -580,9 +622,9 @@ p, li { white-space: pre-wrap; }
  <connections>
   <connection>
    <sender>buttonBox</sender>
-   <signal>accepted()</signal>
+   <signal>rejected()</signal>
    <receiver>DrainageChannelFlowEstimatorDialogBase</receiver>
-   <slot>accept()</slot>
+   <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>414</x>
@@ -596,9 +638,9 @@ p, li { white-space: pre-wrap; }
   </connection>
   <connection>
    <sender>buttonBox</sender>
-   <signal>rejected()</signal>
+   <signal>accepted()</signal>
    <receiver>DrainageChannelFlowEstimatorDialogBase</receiver>
-   <slot>reject()</slot>
+   <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>414</x>
