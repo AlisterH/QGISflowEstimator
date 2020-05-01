@@ -29,8 +29,8 @@ from builtins import range
 import os
 
 from qgis.PyQt import QtGui, uic
-from qgis.PyQt.QtGui import QColor
-from qgis.PyQt.QtWidgets import QDialog, QMessageBox, QFileDialog, QDialogButtonBox
+from qgis.PyQt.QtGui import QColor, QKeySequence
+from qgis.PyQt.QtWidgets import QDialog, QMessageBox, QFileDialog, QDialogButtonBox, QShortcut
 from qgis.PyQt.QtCore import Qt, QObject
 from qgis.gui import QgsRubberBand
 try:
@@ -83,6 +83,12 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         self.btnSampleLine.setEnabled(False)
         self.btnSampleSlope.setEnabled(False)
         self.calcType = 'Trap'
+        
+	# add shortcut keys to zoom in the documentation tab, because why not?
+        # pinch zoom and crtl+scroll already work by default, although zooming is impossible if a font size is set
+        # I guess it would be nice to add zooming to the context menu too, or provide buttons
+        QShortcut(QKeySequence('Ctrl++'), self.textBrowser, self.textBrowser.zoomIn)
+        QShortcut(QKeySequence('Ctrl+-'), self.textBrowser, self.textBrowser.zoomOut)
       
         # add matplotlib figure to dialog
         self.figure = Figure()
