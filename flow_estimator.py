@@ -26,7 +26,7 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from qgis.PyQt.QtWidgets import QAction
 from qgis.PyQt.QtGui import QIcon
 # Initialize Qt resources from file resources.py
-from . import resources_rc
+from .resources import *
 # Import the code for the dialog
 from .flow_estimator_dialog import FlowEstimatorDialog
 import os.path
@@ -67,7 +67,7 @@ class FlowEstimator(object):
         # Declare instance attributes
         self.actions = []
         self.menu = self.tr(u'&Flow Estimator')
-        # TODO: We are going to let the user set this up in a future iteration
+        # TODO: We are going to let the user set this up in a future iteration # ajh: I don't know what this means, or what the motivation was
         self.toolbar = self.iface.addToolBar(u'FlowEstimator')
         self.toolbar.setObjectName(u'FlowEstimator')
         self.windowOpened = False
