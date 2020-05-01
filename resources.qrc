@@ -1,5 +1,6 @@
 <RCC>
-    <qresource prefix="/plugins/FlowEstimator" >
-        <file>icon.png</file>
-    </qresource>
+  <qresource prefix="/plugins/FlowEstimator">
+    <file>icon.png</file>
+    <file>documentation.html</file>
+  </qresource>
 </RCC>
