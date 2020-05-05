@@ -208,24 +208,35 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             print('calc trap channel')
             self.calcType = 'Trap'
             self.args = flowEstimator(self.depth.value(), self.n.value(), self.slope.value(), widthBottom = self.botWidth.value(), rightSS = self.rightSS.value(), leftSS = self.leftSS.value(), units = self.units)
+            self.figure.patch.set_facecolor("white")
             self.plotter()
         elif self.tabWidget.currentIndex() == 1:
             try:
                 self.calcType = 'DEM'
 #                print self.cbWSE.value(), self.n.value(), self.slope.value(), self.staElev, self.units
                 self.args = flowEstimator(self.cbWSE.value(), self.n.value(), self.slope.value(), staElev = self.staElev, units = self.units)
+                self.figure.patch.set_facecolor("white")
                 self.plotter()
             except:
-                self.axes.clear()
+                self.figure.patch.set_facecolor("red")
+                #doesn't seem to do anything: #self.mplCanvas.setEnabled(False)
+                #don't think this does anything?: #self.axes.clear()
+                #this doesn't help #self.plotter()
+                self.mplCanvas.draw()
         else:
             
             try:
                 self.calcType = 'UD'
                 #print 'self.cbUDwse.value(), self.n.value(), self.slope.value(), staElev = self.staElev, units = self.units'
                 self.args = flowEstimator(self.cbUDwse.value(), self.n.value(), self.slope.value(), staElev = self.staElev, units = self.units)
+                self.figure.patch.set_facecolor("white")
                 self.plotter()
             except:
-                self.axes.clear()
+                self.figure.patch.set_facecolor("red")
+                #doesn't seem to do anything: #self.mplCanvas.setEnabled(False)
+                #don't think this does anything?: #self.axes.clear()
+                #this doesn't help #self.plotter()
+                self.mplCanvas.draw()
                 
             
    
