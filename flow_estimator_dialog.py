@@ -389,12 +389,12 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
                 #self.btnSampleLine.setEnabled(True) 
                 self.deactivate()
             else:
-                self.staElev, error = self.doRubberbandProfile()
+                staElev, error = self.doRubberbandProfile()
                 if error:
                     pass
                     #ajh it would be good to restart the selection again after an error
                 else:
-                    self.doRubberbandSlopeEstimator(self.staElev)
+                    self.doRubberbandSlopeEstimator(staElev)
                 #ajh don't need this if we are doing hide and show 
                 #self.btnSampleSlope.setEnabled(True) 
                 self.deactivate()
