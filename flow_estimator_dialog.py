@@ -512,16 +512,25 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         maxElev = np.array([lbMaxEl,rbMaxEl]).min()-.001 # ajh: let the user set WSE up to 1mm (if units in m) below the crest
         WSE = maxElev
         WSE = (self.staElev[:,1].max() - self.staElev[:,1].min())/2. + self.staElev[:,1].min()
-        if self.tabWidget.currentIndex() == 1:
-            self.cbWSE.setValue(WSE)
-            self.cbWSE.setMinimum(minElev)
-            self.cbWSE.setMaximum(maxElev)
-        elif self.tabWidget.currentIndex() == 2:
-            self.cbUDwse.setValue(WSE)
-            self.cbUDwse.setMinimum(minElev)
-            self.cbUDwse.setMaximum(maxElev)
-        else:
-            return
+        self.cbWSE.setValue(WSE)
+        self.cbWSE.setMinimum(minElev)
+        self.cbWSE.setMaximum(maxElev)
+        self.cbUDwse.setValue(WSE)
+        self.cbUDwse.setMinimum(minElev)
+        self.cbUDwse.setMaximum(maxElev)
+        # ajh: doing it like this might be beneficial if switch from WSE to UD (or vice versa) and then fail to load a section succcessfully 
+        # as it was it just meant we had a section with the wrong minimum and maximum values if we switched, loaded a section successfully, and then switched back
+        # if we are going to do it this way we should store two different sections (one for each tab) and reload when we switch tabs
+        # if self.tabWidget.currentIndex() == 1:
+            # self.cbWSE.setValue(WSE)
+            # self.cbWSE.setMinimum(minElev)
+            # self.cbWSE.setMaximum(maxElev)
+        # elif self.tabWidget.currentIndex() == 2:
+            # self.cbUDwse.setValue(WSE)
+            # self.cbUDwse.setMinimum(minElev)
+            # self.cbUDwse.setMaximum(maxElev)
+        # else:
+            # return
 
         # ajh: I don't think this was doing anything
         #self.run()
