@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>616</width>
-    <height>547</height>
+    <width>580</width>
+    <height>505</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,6 +22,9 @@
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget_2">
+     <property name="focusPolicy">
+      <enum>Qt::TabFocus</enum>
+     </property>
      <property name="tabPosition">
       <enum>QTabWidget::East</enum>
      </property>
@@ -55,7 +58,7 @@
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>304</height>
+             <height>239</height>
             </size>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -86,6 +89,9 @@
               <width>0</width>
               <height>0</height>
              </size>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::TabFocus</enum>
             </property>
             <property name="currentIndex">
              <number>0</number>
@@ -186,7 +192,7 @@
                  <double>0.050000000000000</double>
                 </property>
                 <property name="value">
-                 <double>5.000000000000000</double>
+                 <double>1.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -406,6 +412,9 @@
                    <height>16777215</height>
                   </size>
                  </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::TabFocus</enum>
+                 </property>
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -500,6 +509,9 @@
                <layout class="QGridLayout" name="gridLayout_6">
                 <item row="0" column="0">
                  <widget class="QRadioButton" name="ft">
+                  <property name="focusPolicy">
+                   <enum>Qt::TabFocus</enum>
+                  </property>
                   <property name="text">
                    <string>ft</string>
                   </property>
@@ -507,6 +519,9 @@
                 </item>
                 <item row="0" column="1">
                  <widget class="QRadioButton" name="m">
+                  <property name="focusPolicy">
+                   <enum>Qt::TabFocus</enum>
+                  </property>
                   <property name="text">
                    <string>m</string>
                   </property>
@@ -573,9 +588,26 @@
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
-  <tabstop>ft</tabstop>
-  <tabstop>n</tabstop>
+  <tabstop>leftSS</tabstop>
+  <tabstop>rightSS</tabstop>
+  <tabstop>botWidth</tabstop>
+  <tabstop>depth</tabstop>
   <tabstop>cbDEM</tabstop>
+  <tabstop>btnSampleLine</tabstop>
+  <tabstop>btnSampleSlope</tabstop>
+  <tabstop>cbWSE</tabstop>
+  <tabstop>inputFile</tabstop>
+  <tabstop>btnLoadTXT</tabstop>
+  <tabstop>cbUDwse</tabstop>
+  <tabstop>ft</tabstop>
+  <tabstop>m</tabstop>
+  <tabstop>slope</tabstop>
+  <tabstop>n</tabstop>
+  <tabstop>outputDir</tabstop>
+  <tabstop>btnBrowse</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>tabWidget_2</tabstop>
+  <tabstop>textBrowser</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -586,8 +618,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>414</x>
-     <y>634</y>
+     <x>508</x>
+     <y>470</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -602,8 +634,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>414</x>
-     <y>634</y>
+     <x>508</x>
+     <y>470</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
