@@ -474,8 +474,13 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
     def doRubberbandProfile(self):
         layerString = self.cbDEM.currentText()
         layer = utils.getRasterLayerByName(' '.join(layerString.split(' ')[:-1]))
-        if layer.isValid():
-            self.xRes = layer.rasterUnitsPerPixelX()
+        try:
+            if layer.isValid():
+                self.xRes = layer.rasterUnitsPerPixelX()
+        except:
+            QMessageBox.warning(self,'Error',
+                                'Selected DEM layer is missing')
+            return [None, 'error']
         line = LineString(self.pointstoDraw[:-1]) 
         xyzdList = utils.elevationSampler(line,self.xRes, layer)
         sta = xyzdList[-1]
