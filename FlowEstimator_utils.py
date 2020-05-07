@@ -35,6 +35,7 @@ def frange(start, end, step):
   while start < end:
     yield start
     start += step
+  yield end
 
     
 def getRasterLayerNames():
@@ -59,7 +60,8 @@ def valRaster(x,y,rLayer):
 
     z = rLayer.dataProvider().identify(QgsPointXY(x,y), QgsRaster.IdentifyFormatValue).results()[1]
     return z
-    
+
+# ajh: note this function is currently unused
 def calcElev(self):
   
     features = self.vLayer.getFeatures()
