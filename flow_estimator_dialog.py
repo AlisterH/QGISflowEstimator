@@ -139,6 +139,9 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         self.cbUDwse.valueChanged.connect(self.run)
         # ajh: this doesn't fix it
         #self.btnRefresh.clicked.connect(self.run)
+        
+        # it seems nothing has the keyboard focus initially unless we set it manually
+        self.tabWidget.setFocus()
 
         self.manageGui() 
         # ajh: I thought this would work around the crashes, but it doesn't work properly - it only sets a maximum size (almost - it can still be made slightly taller!)
