@@ -641,7 +641,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             outHeader += '\n'*5 + 'Type:\tTrapezoidal Channel\nUnits:\t{0}\nChannel Slope:\t{1:.06f}\nMannings n:\t{2:.02f}\nBottom Width:\t{3:.02f}\nRight Side Slope:\t{4:.02f}\nLeft Side Slope:\t{5:.02f}\n'.format(self.units, self.slope.value(), self.n.value(), self.botWidth.value(), self.rightSS.value(), self.leftSS.value())
             outFile.write(outHeader)
             wseMax = self.depth.value()
-            wseMin = 0.0
+            wseMin = 0.001
         self.mplCanvas.print_figure(outPath + '/FlowEstimatorResultsXSFigure')
         outHeader = '\n\n\n\n\n\n\nwater surface elevation\tflow\tvelocity\tR\tarea\ttop width\tdepth\n'
         outFile.write(outHeader)
