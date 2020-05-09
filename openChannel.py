@@ -81,8 +81,12 @@ def flowEstimator(wsElev, n, channelSlope, **kwargs):
     for i in range(0, len(staElev)):
         x, y = lineIntersection((staElev[i-1], staElev[i]), ([staElev[0][0],wsElev], [staElev[-1][0],wsElev]))  
         if x >= staElev[i-1][0] and x <= staElev[i][0] and abs(y - wsElev)<0.01:
-            #print x,y
-            intersectList.append((x,y))
+            if staElev[i,0] == staElev[i-1,0]:
+                if min(staElev[i,1], staElev[i-1,1]) <= y <= max(staElev[i,1], staElev[i-1,1]):
+                    intersectList.append((x,y))
+            else:
+                #print x,y
+                intersectList.append((x,y))
         else:
             
             #print 'line segments do not intersect'
