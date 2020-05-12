@@ -585,7 +585,10 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         self.outputDir.setText(self.dirName)
         
     def loadTxt(self):
-        filePath, __ = QFileDialog.getOpenFileName(self, 'Select tab or space delimited text file containing station and elevation data')
+        try:
+           filePath, __ = QFileDialog.getOpenFileNameAndFilter(self, 'Select tab or space delimited text file containing station and elevation data') # QGIS2 (using this rather than getOpenFileName will avoid opening a dialog twice)
+        except:
+           filePath, __ = QFileDialog.getOpenFileName(self, 'Select tab or space delimited text file containing station and elevation data')
         # fix_print_with_import
         print(filePath)
         try:
