@@ -34,7 +34,7 @@ from qgis.core import *
 from qgis.gui import *
 import qgis
 
-# ajh: we are still not using this or class ProfiletoolMapToolRenderer from upstream
+# ajh: we are still not using this
 #from .selectlinetool import SelectLineTool
 
 
@@ -74,14 +74,17 @@ class ProfiletoolMapTool(QgsMapTool):
     def activate(self):
         QgsMapTool.activate(self)
         self.canvas.setCursor(self.cursor)
-        self.button.setCheckable(True)
-        self.button.setChecked(True)
+        #self.button.setCheckable(True)
+        #self.button.setChecked(True)
 
 
     def deactivate(self):
         self.desactivate.emit()
-        self.button.setCheckable(False)
-        QgsMapTool.deactivate(self)
+        #self.button.setCheckable(False)
+        try: #should work, but we'll use try anyway
+            QgsMapTool.deactivate(self)
+        except:
+            pass # something funny is going on
 
 
 
