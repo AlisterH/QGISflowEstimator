@@ -92,6 +92,8 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
       
         # add matplotlib figure to dialog
         self.figure = Figure()
+        # this controls the size of the whole dialog; if we get resizing working again I guess we need to add `, forward=True`
+        self.figure.set_size_inches(6, 2.8)
         self.axes = self.figure.add_subplot(111)
         self.figure.subplots_adjust(left=.12, bottom=0.15, right=.75, top=.9, wspace=None, hspace=.2)
         self.mplCanvas = FigureCanvas(self.figure)
