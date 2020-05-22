@@ -1,5 +1,16 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-<html><body>
+<html>
+<head>
+<style>
+pre {
+    line-height: 1
+}
+ul {
+    line-height: 2
+}
+</style>
+</head>
+<body>
 
 <h1>Flow Estimator - A Uniform, Steady Open Channel Flow Calculator for QGIS</h1>
 
@@ -17,14 +28,26 @@
 
 <h2>User Defined Cross Section</h2>
 
-<p>The user defined cross section option allows the use of a tab or space delimited text file without a header.  The first column should contain the station values and the following column should contain elevation values.</p>
+<p>The user defined cross section option allows loading a tab or space delimited text file without a header.  The first column should contain station values and the second column should contain elevation values.</p>
 
-<h2>Final Considerations</h2>
+<h2>Usage Considerations</h2>
 
-<p>Make sure the steady, uniform flow assumption is valid!</p>
+<p>Make sure the steady, uniform flow assumption is valid.</p>
 
 <p>When sampling a DEM cross-section be sure to make the cross-section perpendicular to flow at a location that is representative of the stream or drainage channel.</p>
 
 <p>When sampling DEM cross-sections and slopes, make sure the DEM is in the same CRS as the project CRS (but you knew that already right!).</p>
+
+<h2>Known Issues</h2>
+
+<ul>
+  <li>On QGIS3 there are still occasional crashes, so remember to save your project if necessary.</li>
+
+  <li>On QGIS3 the plugin is hidden when sampling from a raster.  Showing the plugin again isn't 100% reliable.  If this annoys you, hide/show can be disabled by editing flow_estimator_dialog.py, around line 70.  Change "True" to "False":
+  <pre><code>if Qgis.QGIS_VERSION_INT > 29000: # Hide and show works on QGIS3, mostly... although occasionally not!  
+    HIDE_ENABLED='True' # Change to False if you can't cope with the show failing every now and then.</code></pre></li>
+
+  <li>If you accidentally sample from an aerial photo you might need to wait a while!</li>
+</ul>
 
 </body></html>
