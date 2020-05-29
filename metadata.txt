@@ -7,11 +7,14 @@
 name=Flow Estimator
 qgisMinimumVersion=2.0
 description=Open channel hydraulics tool.  Estimates steady, uniform flow using the Manning equation for trapezoidal and DEM sampled channels.
-about=Estimates steady, uniform flow using the Manning equation for trapezoidal and DEM sampled channels.  Intended for use by engineers and hydrologists.  Requires  numpy, and matplotlib libraries
+about=Estimates steady, uniform flow using the Manning equation for trapezoidal and DEM sampled channels.  Intended for use by engineers and hydrologists.
+
+ Requires  numpy and matplotlib libraries.  Optional mplcursors library will display coordinates in mouseover of cross-section - install by running `python -m pip3 mplcursors` in the osgeo shell.
+
 version=0.21
-author=M. Weier - North Dakota State Water Commision
-email=mweier@nd.gov
-repository=https://github.com/msweier/QGISflowEstimator
+author=M. Weier - North Dakota State Water Commision; contributions by Alister Hood
+email=alister.hood@gmail.com
+repository=https://github.com/alisterh/QGISflowEstimator
 
 # End of mandatory metadata
 
@@ -30,8 +33,8 @@ changelog=
 # Tags are comma separated with spaces allowed
 tags=hydraulics, civil engineering, manning, stream, river, drainage, channel
 
-homepage=https://github.com/msweier/QGISflowEstimator
-tracker=https://github.com/msweier/QGISflowEstimator/issues
+homepage=https://github.com/alisterh/QGISflowEstimator
+tracker=https://github.com/alisterh/QGISflowEstimator/issues
 icon=icon.png
 # experimental flag
 experimental=False
