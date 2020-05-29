@@ -38,6 +38,12 @@ try:
 except:
     from qgis.core import QGis, QgsPoint as QgsPointXY
 
+try:
+    import mplcursors
+    MPLCURSORS="installed"
+except:
+    MPLCURSORS="missing"
+
 # ajh: I gather we should code it like this, although for some reason qt4agg seems to work the same in QGIS3
 from matplotlib.backends.qt_compat import is_pyqt5
 if is_pyqt5():
@@ -198,6 +204,14 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
     def refreshPlotText(self):
 
         self.axes.annotate(self.outText, xy=(.76,0.17), xycoords='figure fraction')
+	
+	# enable mouseover coordinate display if mplcursors is available
+        # using click coordinate display instead could be desirable, to output it when saving results, but we currently recalculate when saving, which clears it
+        if MPLCURSORS == "installed":
+            mplcursors.cursor(ground, hover=True)
+            # we can do this as well, but it is a bit weird interacting with both of them
+            # mplcursors.cursor(water, hover=True)
+	
         #at.patch.set_boxstyle("round,pad=0.,rounding_size=0.2")
         #self.axes.add_artist(at)
         self.mplCanvas.draw()
