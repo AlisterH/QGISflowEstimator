@@ -70,6 +70,7 @@ class FlowEstimator(object):
         # TODO: We are going to let the user set this up in a future iteration # ajh: I don't know what this means, or what the motivation was
         self.toolbar = self.iface.addToolBar(u'FlowEstimator')
         self.toolbar.setObjectName(u'FlowEstimator')
+        self.toolbar.setToolTip(u'FlowEstimator Toolbar')
         self.windowOpened = False
 
     # noinspection PyMethodMayBeStatic
