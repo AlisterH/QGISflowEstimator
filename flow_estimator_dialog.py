@@ -208,7 +208,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 	# enable mouseover coordinate display if mplcursors is available
         # using click coordinate display instead could be desirable, to output it when saving results, but we currently recalculate when saving, which clears it
         if MPLCURSORS == "installed":
-            mplcursors.cursor(ground, hover=True)
+            mplcursors.cursor(ground, hover=mplcursors.HoverMode.Transient)
             # we can do this as well, but it is a bit weird interacting with both of them
             # mplcursors.cursor(water, hover=True)
 	
