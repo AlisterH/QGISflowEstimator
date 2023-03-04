@@ -12,7 +12,7 @@ about=Estimates steady, uniform flow using the Manning equation for trapezoidal 
  Requires  numpy and matplotlib libraries.  Optional mplcursors library will display coordinates in mouseover of cross-section - install by running `python -m pip3 mplcursors` in the osgeo shell.
 
 version=0.21
-author=M. Weier - North Dakota State Water Commision; contributions by Alister Hood
+author=M. Weier - North Dakota State Water Commission; contributions by Alister Hood
 email=alister.hood@gmail.com
 repository=https://github.com/alisterh/QGISflowEstimator
 
