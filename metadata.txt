@@ -9,7 +9,7 @@ qgisMinimumVersion=2.0
 description=Open channel hydraulics tool.  Estimates steady, uniform flow using the Manning equation for trapezoidal and DEM sampled channels.
 about=Estimates steady, uniform flow using the Manning equation for trapezoidal and DEM sampled channels.  Intended for use by engineers and hydrologists.
 
- Requires  numpy and matplotlib libraries.  In QGIS 3.x the optional mplcursors library will display coordinates when you mouseover the cross-section - install by running `python3 -m pip mplcursors` in the osgeo shell (QGIS or perhaps the plugin will need a restart if it is running).
+ Requires  numpy and matplotlib libraries.
 
 version=0.21
 author=M. Weier - North Dakota State Water Commission; contributions by Alister Hood
