@@ -102,6 +102,7 @@ def elevationSampler(vectSHP,res,raster):
         zp=valRaster(xp,yp,raster)
         z.append(zp)
         dist.append(currentDist)
+        # ajh: we actually only need z, dist
         xyzdList = [x,y,z,dist]
     return xyzdList
 
