@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  FlowEstimator
@@ -192,7 +191,7 @@ class FlowEstimator(object):
 #            attrs = vars(d)
 #            print '\n'.join("%s: %s" % item for item in attrs.items())
             d.show()
-            d.exec_()
+            d.exec_() # need the _ only for QGIS2
             self.windowOpened = False
 #        # show the dialog
 #        self.dlg.show()

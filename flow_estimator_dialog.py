@@ -686,7 +686,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             # we could alternatively test for an empty file ourselves
             #with warnings.catch_warnings():
             #    warnings.simplefilter("ignore")
-            self.staElev = np.pad(np.loadtxt(filePath), ((0,0), (0,1)), mode='constant', constant_values=0)
+            self.staElev = np.pad(np.loadtxt(filePath, usecols=(0, 1)), ((0,0), (0,1)), mode='constant', constant_values=0)
             d = np.diff(self.staElev[:,:2], axis=0)
             self.staElev[1:,2] = np.cumsum(np.sqrt(np.sum(d*d, axis = 1)))
             #log(str(self.staElev))
