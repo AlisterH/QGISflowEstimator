@@ -100,7 +100,8 @@ def flowEstimator(wsElev, n, channelSlope, **kwargs):
     
     intersectList = []
     for i in range(1, len(staElev)):
-        log('i' + str(i))
+        #alister: used this for testing
+        #log('i' + str(i))
         x, y = lineIntersection((staElev[i-1][:2], staElev[i][:2]), ([staElev[0][0],wsElev], [staElev[-1][0],wsElev]))
         d = staElev[i-1][2] + ( (y-staElev[i-1][1])**2 + (x-staElev[i-1][0])**2 )**0.5
         #log('x1' + str(x))
@@ -126,7 +127,8 @@ def flowEstimator(wsElev, n, channelSlope, **kwargs):
             log('y' + str(y))
             log('d' + str(d))
         else:
-            log('line segments do not intersect')
+            #alister: used this for testing
+            #log('line segments do not intersect')
             pass
     intersectArray = np.array(intersectList)
     if len(intersectArray) < 2:

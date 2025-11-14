@@ -85,8 +85,9 @@ from qgis.utils import pluginMetadata
 log("QGIS " + Qgis.QGIS_VERSION)
 log('Flow Estimator version ' + pluginMetadata('FlowEstimator','Version'))
 
-if Qgis.QGIS_VERSION_INT > 29000: # Hide and show works on QGIS3, mostly... although occasionally not!  
-    HIDE_ENABLED='True' # Change to false if you can't cope with the show failing every now and then.
+if Qgis.QGIS_VERSION_INT > 29000: # Hide and show works on QGIS3, mostly... although occasionally not!
+# Disabling Nov 2025 as it often doesn't work now (due to newer QGIS? QT? Windows 11?)
+    HIDE_ENABLED='False' # Change to false if you can't cope with the show failing every now and then.
 else: # Don't change this - hide works on QGIS2, but not show!
     HIDE_ENABLED='False'
 
@@ -523,6 +524,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             self.iface.mainWindow().statusBar().showMessage( "" ) # ajh: I guess there might have been a statusBar message associated with the saveTool which we should restore if we reenable it.
             # self.canvas.setMapTool(self.saveTool) # ajh: after we do this for some reason it sends a click to the saveTool; we don't want that.
         except:
+            QgsMessageLog.logMessage('error in deactivate','Flow Estimator', 2)
             pass
 #        self.rubberband.reset(self.polygon)
 #        self.iface.mainWindow().statusBar().showMessage("")

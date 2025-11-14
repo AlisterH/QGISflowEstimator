@@ -84,6 +84,7 @@ class ProfiletoolMapTool(QgsMapTool):
         try: #should work, but we'll use try anyway
             QgsMapTool.deactivate(self)
         except:
+            log('deactivate error')
             pass # something funny is going on
 
 
