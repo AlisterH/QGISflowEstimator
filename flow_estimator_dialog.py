@@ -118,6 +118,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         #self.btnOk.setText("Save Data")
         self.btnClose = self.buttonBox.button(QDialogButtonBox.Close) 
         self.btnBrowse.clicked.connect(self.writeDirName)
+        self.btnClose.clicked.connect(self.close)
         self.btnLoadTXT.clicked.connect(self.loadTxt)
         # ajh trying to make it work
         #self.inputFile.textChanged.connect(self.run)
@@ -200,6 +201,8 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 
     # need this to make sure map tool is disconnected if the dialog is closed while it is in use
     def closeEvent(self, event):
+        if hasattr(self, "rubberband"):
+            self.rubberband.reset(self.polygon)
         self.deactivate()
 
     def manageGui(self):
@@ -314,6 +317,8 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             self.btnSampleLine.setEnabled(False)
         self.iface.mainWindow().activateWindow()
         self.sampleBtnCode = 'sampleLine'
+        if hasattr(self, "rubberband"):
+            self.rubberband.reset(self.polygon)
         self.rubberBand()
 
  
@@ -328,6 +333,8 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             self.btnSampleLine.setEnabled(False) #simplest to do both
         self.iface.mainWindow().activateWindow()
         self.sampleBtnCode = 'sampleSlope'
+        if hasattr(self, "rubberband"):
+            self.rubberband.reset(self.polygon)
         self.rubberBand()
 #==============================================================================
 # START rubberband and related functions from
@@ -435,8 +442,6 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
                 self.dblclktemp = None
                 return
             else :
-                if len(self.pointstoDraw) == 0:
-                    self.rubberband.reset(self.polygon)
                 self.pointstoDraw += newPoints
 
 
@@ -522,20 +527,19 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
                                  #? not sure that comment was right as this is for deactivating the map tool, not the plugin
         log('deactivated')
         try:
-            self.rubberband.reset(self.polygon)
             self.tool.moved.disconnect(self.moved)
             self.tool.rightClicked.disconnect(self.rightClicked)
             self.tool.leftClicked.disconnect(self.leftClicked)
             self.tool.doubleClicked.disconnect(self.doubleClicked)
             self.tool.deactivated.disconnect(self.tooldeactivated)
             self.canvas.unsetMapTool(self.tool) # ajh: don't seem to need this
-            self.iface.mainWindow().statusBar().showMessage( "" ) # ajh: I guess there might have been a statusBar message associated with the saveTool which we should restore if we reenable it.
+            self.iface.mainWindow().statusBar().showMessage( "" ) # ajh: I guess there might have been a statusBar message associated with the saveTool which we should restore if we reenable it; but we don't at the moment
             # self.canvas.setMapTool(self.saveTool) # ajh: after we do this for some reason it sends a click to the saveTool; we don't want that.
         except:
             QgsMessageLog.logMessage('error in deactivate','Flow Estimator', 2)
             pass
 #        self.rubberband.reset(self.polygon)
-#        self.iface.mainWindow().statusBar().showMessage("")
+#        self.iface.mainWindow().statusBar().showMessage( "" )
         
 #        self.depth.setEnabled(True)
 #        self.botWidth.setEnabled(True)
