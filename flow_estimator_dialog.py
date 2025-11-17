@@ -198,6 +198,10 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 	    # it seems nothing has the keyboard focus initially unless we set it manually
         self.tabWidget.setFocus()
 
+    # need this to make sure map tool is disconnected if the dialog is closed while it is in use
+    def closeEvent(self, event):
+        self.deactivate()
+
     def manageGui(self):
         log('manageGui')
         self.cbDEM.clear()
@@ -389,15 +393,27 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 #        if self.selectionmethod == 1:
 #            return
 
+
     def tooldeactivated(self):
-        self.rubberband.reset(self.polygon)
-        self.iface.mainWindow().statusBar().showMessage( "" )
         log('show deactivated')
-        self.show()
+        # self.rubberband.reset(self.polygon) # don't think we need this here
+        self.tool.moved.disconnect(self.moved)
+        self.tool.rightClicked.disconnect(self.rightClicked)
+        self.tool.leftClicked.disconnect(self.leftClicked)
+        self.tool.doubleClicked.disconnect(self.doubleClicked)
+        self.tool.deactivated.disconnect(self.tooldeactivated)
+        self.canvas.unsetMapTool(self.tool) # ajh: don't seem to need this elsewhere, so maybe not here too
+        self.iface.mainWindow().statusBar().showMessage( "" )
         if HIDE_ENABLED == 'False':
-            #ajh don't need this if we are doing hide and show
-            self.btnSampleSlope.setEnabled(True) #simplest to do both
+            # ajh2: don't actually need this if we are doing hide and show instead of deactivating the button
+            # ajh: need this otherwise the plugin needs to be restarted to reenable the button
             self.btnSampleLine.setEnabled(True)
+            self.btnSampleSlope.setEnabled(True) 
+            # ajh2: don't seem to need this now
+            # ajh: need to raise the window
+            self.activateWindow()
+        self.show()
+
 
     def rightClicked(self,position):    #used to quit the current action
         log('rightclicked')
@@ -407,16 +423,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
                 self.pointstoCal = []
                 self.rubberband.reset(self.polygon)
             else:
-                if HIDE_ENABLED == 'False':
-                    # ajh2: don't actually need this now, as we hide the window instead of deactivating the button
-                    # ajh: need this otherwise the plugin needs to be restarted to reenable the button
-                    self.btnSampleLine.setEnabled(True)
-                    self.btnSampleSlope.setEnabled(True) 
-                    # ajh2: don't seem to need this now
-                    # ajh: need to raise the window
-                    self.activateWindow()
-
-
+                self.tooldeactivated()
 
 
     def leftClicked(self,position):        #Add point to analyse
@@ -512,6 +519,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         self.tool.deactivated.connect(self.tooldeactivated)
 
     def deactivate(self):        #enable clean exit of the plugin
+                                 #? not sure that comment was right as this is for deactivating the map tool, not the plugin
         log('deactivated')
         try:
             self.rubberband.reset(self.polygon)
