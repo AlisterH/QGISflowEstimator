@@ -201,7 +201,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 
     # need this to make sure map tool is disconnected if the dialog is closed while it is in use
     def closeEvent(self, event):
-        if hasattr(self, "rubberband"):
+        if hasattr(self, "rubberband") and self.rubberband is not None: #is None if the plugin has been reloaded - but we should just close the dialog when reloading, anyway
             self.rubberband.reset(self.polygon)
         self.deactivate()
 
@@ -309,7 +309,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
    
     def sampleLine(self):
         if HIDE_ENABLED == 'True':
-            log('hide sampleLine')
+            log('hide at sampleLine')
             self.hide() # stops everything from working in QGIS2
         else:
             #ajh don't need this if we are doing hide and show
@@ -325,7 +325,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         
     def sampleSlope(self):
         if HIDE_ENABLED == 'True':
-            log('hide sampleSlope')
+            log('hide at sampleSlope')
             self.hide() # stops everything from working in QGIS2
         else:
             #ajh don't need this if we are doing hide and show; and it is a problem if the tool is deactivated

@@ -43,6 +43,7 @@ class FlowEstimator(object):
             application at run time.
         :type iface: QgsInterface
         """
+        self.dlg = None # do this so we have a reusable dialog object instead of making a new one each time we open the plugin
         # Save reference to the QGIS interface
         self.iface = iface
         # initialize plugin directory
@@ -174,6 +175,9 @@ class FlowEstimator(object):
 
 
     def unload(self):
+        # Close dialog if open (if we didn't do this we should add code here to reset the rubber band)
+        if self.dlg is not None:
+            self.dlg.close()
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
             self.iface.removePluginMenu(
@@ -188,11 +192,11 @@ class FlowEstimator(object):
         """Run method that performs all the real work"""
         if not self.windowOpened:
             self.windowOpened = True
-            d = FlowEstimatorDialog(self.iface)
+            self.dlg = FlowEstimatorDialog(self.iface)
 #            attrs = vars(d)
 #            print '\n'.join("%s: %s" % item for item in attrs.items())
-            d.show()
-            d.exec_() # need the _ only for QGIS2
+            self.dlg.show()
+            self.dlg.exec()
             self.windowOpened = False
 #        # show the dialog
 #        self.dlg.show()
