@@ -183,7 +183,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         self.cbUDwse.valueChanged.connect(self.run)
         # ajh: this doesn't fix it
         #self.btnRefresh.clicked.connect(self.run)
-		
+
         self.manageGui() 
         # ajh: I thought this would work around the crashes, but it doesn't work properly - it only sets a maximum size (almost - it can still be made slightly taller!)
         #self.setFixedSize(self.size())
@@ -207,11 +207,25 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 
     def manageGui(self):
         log('manageGui')
-        self.cbDEM.clear()
-        if utils.getRasterLayerNames():
-            self.cbDEM.addItems(utils.getRasterLayerNames())
+        self.cbDEM.clear() # don't actually need this at the moment, as we only call manageGui once
+        names = utils.getRasterLayerNames()
+        if names:
+            self.cbDEM.addItems(names)
             self.btnSampleLine.setEnabled(True)
-            self.btnSampleSlope.setEnabled(True)           
+            self.btnSampleSlope.setEnabled(True)
+
+            # If the currently active layer is present in the combo, select it by default.
+            # We use findText with the layer name for an exact match.
+            active = self.iface.activeLayer()
+            if active is not None:
+                idx = self.cbDEM.findText(active.name(), Qt.MatchStartsWith)
+                if idx >= 0:
+                    # Changing the current index can emit signals that call run().
+                    # Block signals here to avoid an extra run() call since we'll call run() below.
+                    # Alister: I doubt we actually need to do that at the moment
+                    self.cbDEM.blockSignals(True)
+                    self.cbDEM.setCurrentIndex(idx)
+                    self.cbDEM.blockSignals(False)
         self.run()
         
 #    def refreshPlot(self):
