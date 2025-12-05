@@ -37,12 +37,24 @@ def frange(start, end, step):
     start += step
   yield end
 
-    
-def getRasterLayerNames():
+# let's only list single band rasters
+def getRasterLayerNames(single_band_only=True):
     layerMap = QgsProject.instance().mapLayers()
     layerNames = []
     for name, layer in list(layerMap.items()):
         if layer.type() == QgsMapLayer.RasterLayer and layer.providerType() != 'wms':
+            # determine band count without broad try/except
+            band_count = None
+            band_count_method = getattr(layer, 'bandCount', None) # newer QGIS
+            if callable(band_count_method):
+                band_count = band_count_method()
+            else:
+                provider = layer.dataProvider()
+                provider_band_count = getattr(provider, 'bandCount', None) # older QGIS
+                if callable(provider_band_count):
+                    band_count = provider_band_count()
+            if single_band_only and band_count != 1:
+                continue
             srs = layer.crs().authid()
             layerNames.append(str(layer.name()+' '+srs))
     return sorted(layerNames, key=cmp_to_key(locale.strcoll))
