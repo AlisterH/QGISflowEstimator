@@ -12,8 +12,8 @@ import numpy as np
 
 # better than print(), but the docs suggest we should use QgsLogger for logging
 from qgis.core import QgsMessageLog
-def log(message):
-    return QgsMessageLog.logMessage(message,'Flow Estimator', 0) # 0 is level=Qgis.Info in QGIS3`
+def log(message, level):
+    return QgsMessageLog.logMessage(message,'Flow Estimator', level)
 
 def channelBuilder(wsDepth, rightSS, leftSS, widthBottom):
     """
@@ -30,30 +30,30 @@ def channelBuilder(wsDepth, rightSS, leftSS, widthBottom):
 
 
 def lineIntersection(line1, line2): # ajh: do we need this or can we use a numpy intersect function?
-    #log('line1' + str(line1))
-    #log('line2' + str(line2))
+    #log('line1' + str(line1), 0)
+    #log('line2' + str(line2), 0)
     xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
     ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1])
-    #log('xdiff' + str(xdiff))
-    #log('ydiff' + str(ydiff))
+    #log('xdiff' + str(xdiff), 0)
+    #log('ydiff' + str(ydiff), 0)
     def det(a, b):
         return a[0] * b[1] - a[1] * b[0]
 
     div = det(xdiff, ydiff)
-    #log(str(div))
+    #log(str(div), 0)
     if div == 0:
         x = y = np.nan
-        #log('lines do not intersect') # but also true for two horizontal lines at the same level!
+        #log('lines do not intersect', 1) # but also true for two horizontal lines at the same level!
         return x, y
 
-    #log('det(*line1)' + str(det(*line1)))
-    #log('det(*line2)' + str(det(*line2)))
+    #log('det(*line1)' + str(det(*line1)), 0)
+    #log('det(*line2)' + str(det(*line2)), 0)
     d = (det(*line1), det(*line2))
     x = det(d, xdiff) / div
     y = det(d, ydiff) / div
-    #log('x' + str(x))
-    #log('y' + str(y))
-    #log('d' + str(d))
+    #log('x' + str(x), 0)
+    #log('y' + str(y), 0)
+    #log('d' + str(d), 0)
     return x, y
 
 def polygonArea(corners):
@@ -89,7 +89,7 @@ def flowEstimator(wsElev, n, channelSlope, **kwargs):
     elif kwargs.get("widthBottom") and kwargs.get("rightSS") and kwargs.get("leftSS") > 0:
         staElev = channelBuilder(wsElev, kwargs.get("rightSS"), kwargs.get("leftSS"), kwargs.get("widthBottom"))
     else:
-        QgsMessageLog.logMessage('Whoops, wrong input','Flow Estimator', 2) # 2 is level=Qgis.Critical in QGIS3
+        log('Whoops, wrong input', 2) # 2 is level=Qgis.Critical in QGIS3
         return
     if kwargs.get("units") == "m":
         const = 1.0
@@ -101,81 +101,81 @@ def flowEstimator(wsElev, n, channelSlope, **kwargs):
     intersectList = []
     for i in range(1, len(staElev)):
         #alister: used this for testing
-        #log('i' + str(i))
+        #log('i' + str(i), 0)
         x, y = lineIntersection((staElev[i-1][:2], staElev[i][:2]), ([staElev[0][0],wsElev], [staElev[-1][0],wsElev]))
         d = staElev[i-1][2] + ( (y-staElev[i-1][1])**2 + (x-staElev[i-1][0])**2 )**0.5
-        #log('x1' + str(x))
-        #log('y1' + str(y))
-        #log('d' + str(d))
-        #log('staElev' + str(staElev[i-1][0]))
-        #log('staElev' + str(staElev[i][0]))
+        #log('x1' + str(x), 0)
+        #log('y1' + str(y), 0)
+        #log('d' + str(d), 0)
+        #log('staElev' + str(staElev[i-1][0]), 0)
+        #log('staElev' + str(staElev[i][0]), 0)
         if staElev[i-1][0] <= x <= staElev[i][0] or staElev[i-1][0] >= x >= staElev[i][0] or abs(x - staElev[i][0]) < 0.001 or abs(x - staElev[i-1][0]) < 0.001: # or np.is_close(x, staElev[i-1][0]) or np.is_close(x, staElev[i][0]): # not sure why it didn't like this method to catch any float error
-            #log('yes')
+            #log('yes', 0)
             if abs(y - wsElev)<0.001: # ajh: was 0.01, but not sure if we need this test; I think it may not have been doing what Mitch intended
-                #log('yes')
+                #log('yes', 0)
                 if staElev[i,0] == staElev[i-1,0]:
-                    #log('yes')
+                    #log('yes', 0)
                     if min(staElev[i,1], staElev[i-1,1]) <= y <= max(staElev[i,1], staElev[i-1,1]): # ajh: how to know if float error will cause a problem here?
                         intersectList.append((x,y,d))
-                        #log('yes')
+                        #log('yes', 0)
                     else:
-                        log('line segments do not intersect')
+                        log('line segments do not intersect', 1) # 1 is warning
                 else:
-                    #log('no')
+                    #log('no', 0)
                     intersectList.append((x,y,d))
-            log('x' + str(x))
-            log('y' + str(y))
-            log('d' + str(d))
+            log('x' + str(x), 0)
+            log('y' + str(y), 0)
+            log('d' + str(d), 0)
         else:
             #alister: used this for testing
-            #log('line segments do not intersect')
+            #log('line segments do not intersect', 1) # 1 is warning
             pass
     intersectArray = np.array(intersectList)
     if len(intersectArray) < 2:
-        QgsMessageLog.logMessage('Programming Error: less than 2 points intersect; how did the WSE get too high?','Flow Estimator', 2) # 2 is level=Qgis.Critical in QGIS3
-        log('intersectArray\n ' + str(intersectArray))
+        log('Programming Error: less than 2 points intersect; how did the WSE get too high?', 2) # 2 is level=Qgis.Critical in QGIS3
+        log('intersectArray\n ' + str(intersectArray), 0)
         return
-    #log("intersectArray\n" + str(intersectArray))
+    #log("intersectArray\n" + str(intersectArray), 0)
     # ajh: why is sorting necessary?
     #intersectArray = intersectArray[intersectArray[:,0].argsort()]
     if len(intersectArray) > 2:
-        QgsMessageLog.logMessage('more than two points intersect','Flow Estimator') # default is warning (1)
-        log('intersectArray\n ' + str(intersectArray))
+        log('more than two points intersect', 1) # 1 is warning
+        log('intersectArray\n ' + str(intersectArray), 0)
 		# find the start point
-        #log(str(staElev[np.where(staElev[:,1]==minElev)][0][2]))
-        #log('staminElev ' + str(staMinElev))
-        #log('intersectArray\n ' + str(intersectArray))
-        #log("002 " + str(intersectArray[:,0]<=staMinElev))
-        #log("002 " + str(np.where(intersectArray[:,0]<=staMinElev)))
-        #log("003 " + str(intersectArray[:,0]>=staMinElev))
-        #log("003 " + str(np.where(intersectArray[:,0]>=staMinElev)))
+        #log(str(staElev[np.where(staElev[:,1]==minElev)][0][2]), 0)
+        #log('staminElev ' + str(staMinElev), 0)
+        #log('intersectArray\n ' + str(intersectArray), 0)
+        #log("002 " + str(intersectArray[:,0]<=staMinElev), 0)
+        #log("002 " + str(np.where(intersectArray[:,0]<=staMinElev)), 0)
+        #log("003 " + str(intersectArray[:,0]>=staMinElev), 0)
+        #log("003 " + str(np.where(intersectArray[:,0]>=staMinElev)), 0)
     # don't  put this in the if above; if something has gone wrong we could have two points at the same elevation on the same side of the thalweg, so we should still use this logic for only two points.
     staMinElev = np.median(staElev[np.where(staElev[:,1]==minElev)][0][2])
-    #log('staminElev ' + str(staMinElev))
+    #log('staminElev ' + str(staMinElev), 0)
     try:
         startPoint = intersectArray[np.where(intersectArray[:,2]<staMinElev)][-1]
-        #log('startPoint ' + str(startPoint))
+        #log('startPoint ' + str(startPoint), 0)
 		# find the end point
-        #log('staminElev ' + str(staMinElev))
-        #log("intersectArray\n" + str(intersectArray))
-        #log("002 " + str(intersectArray[:,0]<=staMinElev))
-        #log("002 " + str(intersectArray[np.where(intersectArray[:,2]<staMinElev)]))
-        #log("003 " + str(intersectArray[:,0]>=staMinElev))
-        #log("003 " + str(np.where(intersectArray[:,0]>=staMinElev)))
+        #log('staminElev ' + str(staMinElev), 0)
+        #log("intersectArray\n" + str(intersectArray), 0)
+        #log("002 " + str(intersectArray[:,0]<=staMinElev), 0)
+        #log("002 " + str(intersectArray[np.where(intersectArray[:,2]<staMinElev)]), 0)
+        #log("003 " + str(intersectArray[:,0]>=staMinElev), 0)
+        #log("003 " + str(np.where(intersectArray[:,0]>=staMinElev)), 0)
         endPoint = intersectArray[np.where(intersectArray[:,2]>staMinElev)][0]
-        #log('endPoint ' + str(endPoint))
+        #log('endPoint ' + str(endPoint), 0)
     except:
-        QgsMessageLog.logMessage('Programming Error: no intersections on one side of the thalweg; how did the WSE get too high?','Flow Estimator', 2) # 2 is level=Qgis.Critical in QGIS3
-        log('intersectArray\n' + str(intersectArray))
+        log('Programming Error: no intersections on one side of the thalweg; how did the WSE get too high?', 2) # 2 is level=Qgis.Critical in QGIS3
+        log('intersectArray\n' + str(intersectArray), 0)
         return
     intersectArray = np.vstack([startPoint, endPoint])
-    # log('intersectArray\n ' + str(intersectArray))
+    # log('intersectArray\n ' + str(intersectArray), 0)
     
     # don't really need variables for these, but it might make the code easier to understand
     staMin = intersectArray[0][0]
-    #log('staMin' + str(staMin))
+    #log('staMin' + str(staMin), 0)
     staMax = intersectArray[1][0]
-    #log('staMax' + str(staMax))
+    #log('staMax' + str(staMax), 0)
     dMin = intersectArray[0][2]
     dMax = intersectArray[1][2]
     
@@ -186,29 +186,29 @@ def flowEstimator(wsElev, n, channelSlope, **kwargs):
     maxDepth = wsElev-minElev
     
 
-    #log("intersectArray[0] " + str(intersectArray[0]))
-    #log("staElev " + str(staElev))
-    #log("intersectArray[1] " + str(intersectArray[1]))
+    #log("intersectArray[0] " + str(intersectArray[0]), 0)
+    #log("staElev " + str(staElev), 0)
+    #log("intersectArray[1] " + str(intersectArray[1]), 0)
     staElevTrim = np.vstack([intersectArray[0], staElev, intersectArray[1]])
-    #log("staElevTrim " + str(staElevTrim))
+    #log("staElevTrim " + str(staElevTrim), 0)
     # ajh: why do we need to sort?
     #staElevTrim = staElevTrim[staElevTrim[:,0].argsort()]
     staElevTrim = staElevTrim[np.where((staElevTrim[:,2]>=dMin) & (staElevTrim[:,2]<=dMax))]
-    #log("staElevTrim " + str(staElevTrim))
+    #log("staElevTrim " + str(staElevTrim), 0)
   
     area = polygonArea(staElevTrim)
-    #log(str(area))
+    #log(str(area), 0)
     # These two give the same answers, effectively validating both sets of code
     P = staElevTrim[-1,2] - staElevTrim[0,2]
     R = area/P
-    #log('P ' + str(P))
-    #log('P ' + str(channelPerimeter(staElevTrim)))
+    #log('P ' + str(P), 0)
+    #log('P ' + str(channelPerimeter(staElevTrim)), 0)
     #R = area/channelPerimeter(staElevTrim)
     # AJH: TODO I think it would be good to output channelPerimeter so that users can quickly confirm in their own minds that we are producing the right answers
     v = (const/n)*np.power(R,(2./3.0))*np.sqrt(channelSlope)
-    #log(str(v))
+    #log(str(v), 0)
     Q = v*area
-    #log(str(Q))
+    #log(str(Q), 0)
     topWidth = staMax-staMin
     xGround = staElev[:,0]
     yGround = staElev[:,1]

@@ -75,15 +75,15 @@ from shapely.geometry import LineString
 import numpy as np
 
 # better than print(), although the docs suggest we should use QgsLogger for logging
-def log(message):
-    return QgsMessageLog.logMessage(message,'Flow Estimator', 0) # 0 is level=Qgis.Info in QGIS3`
+def log(message, level):
+    return QgsMessageLog.logMessage(message,'Flow Estimator', level)
 # I saw it as a lambda, but find that less comprehensible:
-#def log(): = lambda m: QgsMessageLog.logMessage(m,'Flow Estimator', 0)
+#def log(): = lambda m: QgsMessageLog.logMessage(m,'Flow Estimator', level)
 
 # log the versions we are running, because why not?
 from qgis.utils import pluginMetadata
-log("QGIS " + Qgis.QGIS_VERSION)
-log('Flow Estimator version ' + pluginMetadata('FlowEstimator','Version'))
+log("QGIS " + Qgis.QGIS_VERSION, 0)
+log('Flow Estimator version ' + pluginMetadata('FlowEstimator','Version'), 0)
 
 if Qgis.QGIS_VERSION_INT > 29000: # Hide and show works on QGIS3, mostly... although occasionally not!
 # Disabling Nov 2025 as it often doesn't work now (due to newer QGIS? QT? Windows 11?)
@@ -145,7 +145,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         #lstActions = self.widgetPlotToolbar.actions()
         #self.widgetPlotToolbar.removeAction(lstActions[7])
         self.vLayout.addWidget(self.mplCanvas)
-        #log(str(self.vLayout.minimumSize()))
+        #log(str(self.vLayout.minimumSize()), 0)
         #self.vLayout.addWidget(self.widgetPlotToolbar)
 
         # ajh: change the colours; perhaps we could use a stylesheet instead
@@ -206,7 +206,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         self.deactivate()
 
     def manageGui(self):
-        log('manageGui')
+        log('manageGui', 0)
         self.cbDEM.clear() # don't actually need this at the moment, as we only call manageGui once
         names = utils.getRasterLayerNames()
         if names:
@@ -282,13 +282,13 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             self.units = 'm'
             
         if self.tabWidget.currentIndex() == 0:
-            log('calc trap channel')
+            log('calc trap channel', 0)
             self.calcType = 'Trap'
             self.args = flowEstimator(self.depth.value(), self.n.value(), self.slope.value(), widthBottom = self.botWidth.value(), rightSS = self.rightSS.value(), leftSS = self.leftSS.value(), units = self.units)
             self.figure.patch.set_facecolor("white")
             self.plotter()
         elif self.tabWidget.currentIndex() == 1: # ajh: only difference between this and UD channel (below) is using self.cbWSE.value vs self.cbUDwse.value
-            log('calc DEM channel')
+            log('calc DEM channel', 0)
             try:
                 self.calcType = 'DEM'																										          # ajh: TODO combine with DEM channel below
 #                print self.cbWSE.value(), self.n.value(), self.slope.value(), self.staElev, self.units
@@ -296,23 +296,23 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
                 self.figure.patch.set_facecolor("white")
                 self.plotter()
             except:
-                QgsMessageLog.logMessage('could not solve; is the cross-section very unusual?','Flow Estimator', 2) # 2 is level=Qgis.Critical in QGIS3
+                log('could not solve; is the cross-section very unusual?', 2) # 2 is level=Qgis.Critical in QGIS3
                 #doesn't seem to do anything: #self.mplCanvas.setEnabled(False)
                 #this doesn't help #self.plotter()
                 self.figure.patch.set_facecolor("red")
                 #self.axes.clear()
                 self.mplCanvas.draw()
         else: # ajh: only difference between this and DEM channel (above) is using self.cbWSE.value vs self.cbUDwse.value
-            log('calc UD channel')
+            log('calc UD channel', 0)
             try:
                 self.calcType = 'UD'																										          # ajh: TODO combine with DEM channel above
-                #log(str(self.staElev))
+                #log(str(self.staElev), 0)
                 #print 'self.cbUDwse.value(), self.n.value(), self.slope.value(), staElev = self.staElev, units = self.units'
                 self.args = flowEstimator(self.cbUDwse.value(), self.n.value(), self.slope.value(), staElev = self.staElev, units = self.units)
                 self.figure.patch.set_facecolor("white")
                 self.plotter()
             except:
-                QgsMessageLog.logMessage('could not solve; is the cross-section very unusual?','Flow Estimator', 2) # 2 is level=Qgis.Critical in QGIS3
+                log('could not solve; is the cross-section very unusual?', 2) # 2 is level=Qgis.Critical in QGIS3
                 #doesn't seem to do anything: #self.mplCanvas.setEnabled(False)
                 #this doesn't help #self.plotter()
                 self.figure.patch.set_facecolor("red")
@@ -323,7 +323,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
    
     def sampleLine(self):
         if HIDE_ENABLED == 'True':
-            log('hide at sampleLine')
+            log('hide at sampleLine', 0)
             self.hide() # stops everything from working in QGIS2
         else:
             #ajh don't need this if we are doing hide and show
@@ -339,7 +339,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         
     def sampleSlope(self):
         if HIDE_ENABLED == 'True':
-            log('hide at sampleSlope')
+            log('hide at sampleSlope', 0)
             self.hide() # stops everything from working in QGIS2
         else:
             #ajh don't need this if we are doing hide and show; and it is a problem if the tool is deactivated
@@ -356,7 +356,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 #==============================================================================
     def rubberBand(self):
      
-        log('rubberband')
+        log('rubberband', 0)
         self.canvas = self.iface.mapCanvas()
         #Init class variables
         if self.sampleBtnCode=='sampleLine':
@@ -416,7 +416,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 
 
     def tooldeactivated(self):
-        log('show deactivated')
+        log('show deactivated', 0)
         # self.rubberband.reset(self.polygon) # don't think we need this here
         self.tool.moved.disconnect(self.moved)
         self.tool.rightClicked.disconnect(self.rightClicked)
@@ -437,7 +437,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 
 
     def rightClicked(self,position):    #used to quit the current action
-        log('rightclicked')
+        log('rightclicked', 0)
         if self.selectionmethod == 0:
             if len(self.pointstoDraw) > 0:
                 self.pointstoDraw = []
@@ -448,7 +448,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 
 
     def leftClicked(self,position):        #Add point to analyse
-        log('leftclicked')
+        log('leftclicked', 0)
         mapPos = self.canvas.getCoordinateTransform().toMapCoordinates(position["x"],position["y"])
         newPoints = [[mapPos.x(), mapPos.y()]]
         if self.selectionmethod == 0:
@@ -460,7 +460,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 
 
     def doubleClicked(self,position):
-        log('doubleclicked')
+        log('doubleclicked', 0)
         # ajh: doing show first avoids problems with dialog not showing in some cases after running slope estimator
         # and it also means the user can see the graph before deciding whether to accept the slope
         self.show()
@@ -481,10 +481,10 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             #Validation of line
             mapPos = self.canvas.getCoordinateTransform().toMapCoordinates(position["x"],position["y"])
             newPoints = [[mapPos.x(), mapPos.y()]]
-            log('newPoints ' + str(newPoints))
+            log('newPoints ' + str(newPoints), 0)
             self.pointstoDraw += newPoints
-            log('self.pointstoDraw ' + str(self.pointstoDraw))
-            log('len(self.pointstoDraw) ' + str(len(self.pointstoDraw)))
+            log('self.pointstoDraw ' + str(self.pointstoDraw), 0)
+            log('len(self.pointstoDraw) ' + str(len(self.pointstoDraw)), 0)
             #launch analyses
             self.iface.mainWindow().statusBar().showMessage(str(self.pointstoDraw))
             if len(self.pointstoDraw) < 3: # double-click has two identical points; perhaps can delete this if we change from using double clicks 
@@ -502,8 +502,8 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
                         d = np.diff(staElev, axis=0)
                         self.staElev[1:,2] = np.cumsum(np.sqrt(np.sum(d*d, axis = 1)))
                         self.doIrregularProfileFlowEstimator(staElevPrev)
-                        #log('self.staElev' + str(self.staElev))
-                        #log('staElevPrev' + str(staElevPrev))
+                        #log('self.staElev' + str(self.staElev), 0)
+                        #log('staElevPrev' + str(staElevPrev), 0)
                 else:
                     staElev, error = self.doRubberbandProfile()
                     if error:
@@ -530,7 +530,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 ###***********************************************
             
     def connectTool(self):
-        log('connecting')
+        log('connecting', 0)
         self.tool.moved.connect(self.moved)
         self.tool.rightClicked.connect(self.rightClicked)
         self.tool.leftClicked.connect(self.leftClicked)
@@ -539,8 +539,9 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
 
     def deactivate(self):        #enable clean exit of the plugin
                                  #? not sure that comment was right as this is for deactivating the map tool, not the plugin
-        log('deactivated')
+        log('deactivated', 0)
         try:
+            #when closing the dialog these normally fail because self.tool is only created when rubberBand() is called
             self.tool.moved.disconnect(self.moved)
             self.tool.rightClicked.disconnect(self.rightClicked)
             self.tool.leftClicked.disconnect(self.leftClicked)
@@ -550,7 +551,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             self.iface.mainWindow().statusBar().showMessage( "" ) # ajh: I guess there might have been a statusBar message associated with the saveTool which we should restore if we reenable it; but we don't at the moment
             # self.canvas.setMapTool(self.saveTool) # ajh: after we do this for some reason it sends a click to the saveTool; we don't want that.
         except:
-            QgsMessageLog.logMessage('error in deactivate','Flow Estimator', 2)
+            log('error in deactivate', 2) # 2 is critical
             pass
 #        self.rubberband.reset(self.polygon)
 #        self.iface.mainWindow().statusBar().showMessage( "" )
@@ -568,7 +569,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
     
     def doRubberbandProfile(self):
         layerString = self.cbDEM.currentText()
-        log('sampling ' + layerString)
+        log('sampling ' + layerString, 0)
         layer = utils.getRasterLayerByName(' '.join(layerString.split(' ')[:-1]))
         try:
             if layer.isValid():
@@ -578,25 +579,25 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
                                 'Selected DEM layer is missing')
             return [None, 'error']
         line = LineString(self.pointstoDraw[:-1]) 
-#        log('xyzdList start')
+#        log('xyzdList start', 0)
 #        QApplication.processEvents()
         # ajh: TODO this line is the slow part, expecially if we accidentally sample an aerial photo or something.
         # we actually only need a zdlist.
         # we may be able to optimise it by only returning what we need, creating the x y d values with numpy, and other optimisations
         # but I suspect in reality it all comes down to the provider speed
         xyzdList = utils.elevationSampler(line,self.xRes, layer)
-#        log('xyzdList end')
+#        log('xyzdList end', 0)
 #        QApplication.processEvents()
         sta = xyzdList[-1]
-        #log(str(sta))
+        #log(str(sta), 0)
         elev = xyzdList[-2]
-        #log(str(elev))
+        #log(str(elev), 0)
         # ajh: I understand np.column_stack is more efficient
         staElev = np.column_stack((sta, elev))
         # we can just do this if we change the input to just d z
         #staElev = np.column_stack(dzList)
         #staElev = np.array(list(zip(sta, elev)))
-        log(str(staElev))
+        log(str(staElev), 0)
         try:
             np.isnan(np.sum(staElev[:,1]))
             return [staElev, None]
@@ -606,7 +607,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             # or perhaps somehow due to suspending the machine and then waking it up again
             QMessageBox.warning(self,'Error',
                                 'Sampled line not within bounds of DEM (perhaps layer CRS is different from project CRS)')
-            #log(str(staElev))
+            #log(str(staElev), 0)
             # ajh: don't think we need this
             #self.cleaning()
             
@@ -623,6 +624,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             lbMaxEl = self.staElev[np.where(self.staElev[:,0]>thalweigX)][:,1].max()
         except:
             QMessageBox.warning(self,'Error', 'Channel not found')
+            #log('error: channel not found', 1) # 1 is warning (1)
             # ajh: don't think we need this
             #self.deactivate()
             self.staElev = staElevPrev
@@ -631,6 +633,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             rbMaxEl = self.staElev[np.where(self.staElev[:,0]<thalweigX)][:,1].max()
         except:
             QMessageBox.warning(self,'Error', 'Channel not found')
+            #log('error: channel not found', 1) # 1 is warning (1)
             # ajh: don't think we need this
             #self.deactivate()
             self.staElev = staElevPrev
@@ -665,7 +668,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
     def doRubberbandSlopeEstimator(self, staElev):
          
         slope = -(staElev[:,1][-1] - staElev[:,1][0])/staElev[:,0][-1]
-        #log(str(slope))
+        #log(str(slope), 0)
 
         self.axes.clear()
         
@@ -684,7 +687,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         if slope<=0:
             QMessageBox.warning(self,'Error',
                                 'Negative or zero slope\nPlease check sampled area\n\nWater flows downhill you know!')
-            QgsMessageLog.logMessage('error: negative slope', 'Flow Estimator') # default is warning (1)
+            #log('error: negative slope', 1) # 1 is warning
         else:
             reply = QMessageBox.question(self,'Message',
             'DEM Derived Slope is {}\nWould you like to use this value?'.format(str(slope.astype('U8'))), QMessageBox.Yes| 
@@ -706,7 +709,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         except:
            filePath, __ = QFileDialog.getOpenFileName(self, 'Select tab or space delimited text file containing station and elevation data')
         self.inputFile.setText(filePath)
-        log('filePath: ' + filePath)
+        log('filePath: ' + filePath, 0)
         staElevPrev = self.staElev
         try:
             # ajh: np.loadtxt sends a normal warning for an empty file; we want most messages tagged and sent via QgsMessageLog, but QMessageBox below is sufficient in this case
@@ -717,7 +720,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             self.staElev = np.pad(np.loadtxt(filePath, usecols=(0, 1)), ((0,0), (0,1)), mode='constant', constant_values=0)
             d = np.diff(self.staElev[:,:2], axis=0)
             self.staElev[1:,2] = np.cumsum(np.sqrt(np.sum(d*d, axis = 1)))
-            #log(str(self.staElev))
+            #log(str(self.staElev), 0)
             self.calcType = 'UD' 
             self.doIrregularProfileFlowEstimator(staElevPrev)
         except:
@@ -750,7 +753,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             outHeader = '*'*20 + '\nFlow Estimator - A QGIS plugin\nEstimates uniform, steady flow in a channel using Mannings equation\n' + '*'*20
             if self.calcType == 'DEM' or self.calcType == 'UD':
                 if self.staElev.size == 0:
-                    QgsMessageLog.logMessage("No DEM/UD section", 'Flow Estimator') # default is warning (1)
+                    log("No DEM/UD section", 1) # 1 is warning
                     # we could use the message bar, but I think it is quite good to make the user click through an error like this
                     QMessageBox.warning(self,'Error',
                                     'Try cutting a section from DEM, or loading a UD section from file.')
@@ -784,8 +787,8 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             step = 0.05 # ajh: 50mm steps allow us to produce a sane graph for reasonably shallow sections
             wseList = []
             qList = []
-            #log("wseMax " + str(wseMax))
-            #log("wseMin " + str(wseMin))
+            #log("wseMax " + str(wseMax), 0)
+            #log("wseMin " + str(wseMin), 0)
             for wse in utils.frange(wseMin, wseMax, step):
                 if self.calcType == 'DEM' or self.calcType == 'UD':
                     args = flowEstimator(wse, self.n.value(), self.slope.value(), staElev = self.staElev, units = self.units)
