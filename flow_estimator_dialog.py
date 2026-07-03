@@ -74,6 +74,8 @@ from .ptmaptool import ProfiletoolMapTool
 from shapely.geometry import LineString
 import numpy as np
 
+from .qt_compat import BUTTONBOX_SAVE, BUTTONBOX_CLOSE, MATCH_STARTS_WITH, COLOR_RED, COLOR_BLUE, MSGBOX_YES, MSGBOX_NO
+
 try:
     # QGIS 3.x and 4.x
     from qgis.core import Qgis, QgsMessageLog
@@ -131,10 +133,10 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         self.iface = iface
         self.setupUi(self)
         
-        self.btnOk = self.buttonBox.button(QDialogButtonBox.Save)
+        self.btnOk = self.buttonBox.button(BUTTONBOX_SAVE)
         #ajh: it seems this wasn't working, so I have changed from a stock OK button to a stock Save button
         #self.btnOk.setText("Save Data")
-        self.btnClose = self.buttonBox.button(QDialogButtonBox.Close) 
+        self.btnClose = self.buttonBox.button(BUTTONBOX_CLOSE) 
         self.btnBrowse.clicked.connect(self.writeDirName)
         self.btnClose.clicked.connect(self.close)
         self.btnLoadTXT.clicked.connect(self.loadTxt)
@@ -222,6 +224,14 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         if hasattr(self, "rubberband") and self.rubberband is not None: #is None if the plugin has been reloaded - but we should just close the dialog when reloading, anyway
             self.rubberband.reset(self.polygon)
         self.deactivate()
+        super().closeEvent(event)
+
+    # need this to make sure map tool is disconnected if the dialog is closed while it is in use
+    def reject(self):
+        if hasattr(self, "rubberband") and self.rubberband is not None: #is None if the plugin has been reloaded - but we should just close the dialog when reloading, anyway
+            self.rubberband.reset(self.polygon)
+        self.deactivate()
+        super().reject()
 
     def manageGui(self):
         log('manageGui', LEVEL_INFO)
@@ -236,7 +246,7 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             # We use findText with the layer name for an exact match.
             active = self.iface.activeLayer()
             if active is not None:
-                idx = self.cbDEM.findText(active.name(), Qt.MatchStartsWith)
+                idx = self.cbDEM.findText(active.name(), MATCH_STARTS_WITH)
                 if idx >= 0:
                     # Changing the current index can emit signals that call run().
                     # Block signals here to avoid an extra run() call since we'll call run() below.
@@ -398,9 +408,9 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         self.rubberband = QgsRubberBand(self.canvas, self.polygon)
         self.rubberband.setWidth(2)
         if self.sampleBtnCode == 'sampleLine':
-            color = Qt.red
+            color = COLOR_RED
         else:
-            color = Qt.blue
+            color = COLOR_BLUE
         self.rubberband.setColor(QColor(color))
         #init the table where is saved the polyline
         self.pointstoDraw = []
@@ -708,9 +718,9 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             #log('error: negative slope', LEVEL_WARNING)
         else:
             reply = QMessageBox.question(self,'Message',
-            'DEM Derived Slope is {}\nWould you like to use this value?'.format(str(slope.astype('U8'))), QMessageBox.Yes| 
-            QMessageBox.No, QMessageBox.Yes)
-            if reply == QMessageBox.Yes:
+            'DEM Derived Slope is {}\nWould you like to use this value?'.format(str(slope.astype('U8'))), MSGBOX_YES| 
+            MSGBOX_NO, MSGBOX_YES)
+            if reply == MSGBOX_YES:
                 self.slope.setValue(slope)
 
             else:

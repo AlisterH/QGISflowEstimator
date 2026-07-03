@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from .qt_compat import CURSOR_CROSS, RIGHT_BUTTON
 #-----------------------------------------------------------
 #
 # Profile
@@ -55,7 +56,7 @@ class ProfiletoolMapTool(QgsMapTool):
     def __init__(self, canvas,button):
         QgsMapTool.__init__(self,canvas)
         self.canvas = canvas
-        self.cursor = QCursor(Qt.CrossCursor)
+        self.cursor = QCursor(CURSOR_CROSS)
         self.button = button
 
     def canvasMoveEvent(self,event):
@@ -63,7 +64,7 @@ class ProfiletoolMapTool(QgsMapTool):
 
 
     def canvasReleaseEvent(self,event):
-        if event.button() == Qt.RightButton:
+        if event.button() == RIGHT_BUTTON:
             self.rightClicked.emit({'x': event.pos().x(), 'y': event.pos().y()})
         else:
             self.leftClicked.emit( {'x': event.pos().x(), 'y': event.pos().y()} )

@@ -6,23 +6,22 @@
 [general]
 name=Flow Estimator
 qgisMinimumVersion=2.0
+qgisMaximumVersion = 4.99
 description=Open channel hydraulics tool.  Estimates steady, uniform flow using the Manning equation for trapezoidal and DEM sampled channels.
 about=Estimates steady, uniform flow using the Manning equation for trapezoidal and DEM sampled channels.  Intended for use by engineers and hydrologists.
 
  Requires  numpy and matplotlib libraries.
 
-version=0.21
+version = 0.22
 author=M. Weier - North Dakota State Water Commission; contributions by Alister Hood
 email=alister.hood@gmail.com
 repository=https://github.com/alisterh/QGISflowEstimator
 
 # End of mandatory metadata
 
-# Recommended items:
-qgisMaximumVersion=3.99
-
 # Uncomment the following line and add your changelog:
-changelog=
+changelog =
+		0.22 - support for QGIS4
 		0.21 - support for QGIS3 plus many bugfixes and minor enhancements
 		0.20 - removed dependency on shapely library that was causing crashes
 		0.14 - fixed custom CRS bug to handle user defined CRS names
