@@ -442,6 +442,14 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
         xyzdList = utils.elevationSampler(line, self.xRes, layer)
         sta = xyzdList[-1]
         elev = xyzdList[-2]
+        x_coords = xyzdList[0]
+        y_coords = xyzdList[1]
+
+        # --- diagnostic ---
+        # for xi, yi, zi, si in zip(x_coords, y_coords, elev, sta):
+            # log('station {:.2f}  x={:.2f} y={:.2f}  z={}'.format(si, xi, yi, zi), LEVEL_INFO)
+            # log('mesh extent: {}'.format(layer.extent().toString()), LEVEL_INFO)
+        # --- end diagnostic ---
         staElev = np.column_stack((sta, elev))
         log(str(staElev), LEVEL_INFO)
         try:

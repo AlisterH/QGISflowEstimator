@@ -25,7 +25,7 @@ from functools import cmp_to_key
 import locale
 import math
 
-from qgis.core import QgsRaster, QgsMapLayer
+from qgis.core import QgsRaster, QgsMapLayer, QgsMeshDatasetIndex
 
 try:
     from qgis.core import QgsPointXY, QgsProject
@@ -110,174 +110,22 @@ def valRaster(x, y, rLayer):
     z = rLayer.dataProvider().identify(QgsPointXY(x, y), QgsRaster.IdentifyFormatValue).results()[1]
     return z
 
+import math
+from qgis.core import QgsMeshDatasetIndex
+
 def valMesh(x, y, mLayer):
-    """Sample elevation value from mesh layer at point (x, y) using barycentric interpolation"""
-    try:
-        mesh = mLayer.nativeMesh()
-        if mesh is None:
-            return None
-        
-        # Get vertices and faces
-        vertices = mesh.vertices()
-        faces = mesh.faces()
-        
-        if not vertices or not faces:
-            return None
-        
-        # Try to get the elevation dataset (usually the first one)
-        try:
-            datasets = mLayer.dataProvider().datasets()
-            if not datasets:
-                # If no datasets, try to use vertex z-coordinates
-                return _interpolateFromVertices(x, y, vertices, faces, use_z_coords=True)
-            
-            # Get the first dataset group
-            dataset_group = datasets[0]
-            
-            # Find the best face containing or closest to the point
-            best_face_idx = -1
-            best_distance = float('inf')
-            
-            for face_idx, face in enumerate(faces):
-                # Get vertices of this face
-                face_vertices = [vertices[v_idx] for v_idx in face if v_idx >= 0]
-                
-                if len(face_vertices) < 3:
-                    continue
-                
-                # Check if point is inside face using barycentric coordinates
-                inside, bary_coords = _pointInTriangle(x, y, face_vertices)
-                
-                if inside:
-                    best_face_idx = face_idx
-                    break
-                else:
-                    # Find closest point on face
-                    dist = _pointToFaceDistance(x, y, face_vertices)
-                    if dist < best_distance:
-                        best_distance = dist
-                        best_face_idx = face_idx
-            
-            if best_face_idx < 0:
-                return None
-            
-            # Get face vertices
-            face = faces[best_face_idx]
-            face_vertices = [vertices[v_idx] for v_idx in face if v_idx >= 0]
-            
-            if len(face_vertices) < 3:
-                return None
-            
-            # Interpolate elevation value using barycentric coordinates
-            inside, bary_coords = _pointInTriangle(x, y, face_vertices)
-            
-            # Get elevation values from dataset at face vertices
-            try:
-                # Try to get values from the first dataset (vertex-based)
-                face_indices = [v_idx for v_idx in face if v_idx >= 0]
-                if len(face_indices) >= 3:
-                    # Use first three vertices for interpolation
-                    z_vals = []
-                    for v_idx in face_indices[:3]:
-                        # Try to get value from dataset
-                        try:
-                            # Access the dataset values
-                            val = dataset_group[0][v_idx] if isinstance(dataset_group[0], (list, tuple)) else face_vertices[face_indices.index(v_idx)].z()
-                            z_vals.append(float(val) if val is not None else face_vertices[face_indices.index(v_idx)].z())
-                        except:
-                            z_vals.append(face_vertices[face_indices.index(v_idx)].z())
-                    
-                    if len(z_vals) >= 3 and all(z is not None for z in z_vals):
-                        # Interpolate using barycentric coordinates
-                        z_interp = bary_coords[0] * z_vals[0] + bary_coords[1] * z_vals[1] + bary_coords[2] * z_vals[2]
-                        return z_interp
-            except:
-                pass
-            
-            # Fallback: interpolate from vertex z-coordinates
-            return _interpolateFromVertices(x, y, face_vertices, use_z_coords=True, bary_coords=bary_coords)
-                
-        except Exception as e:
-            # Fallback to simple z-coordinate interpolation
-            vertices_list = list(vertices)
-            return _interpolateFromVertices(x, y, vertices_list, faces, use_z_coords=True)
-            
-    except Exception as e:
+    rs = mLayer.rendererSettings()
+    group_index = rs.activeScalarDatasetGroup()
+    if group_index < 0:
         return None
 
-def _pointInTriangle(px, py, vertices):
-    """Check if point is in triangle and return barycentric coordinates"""
-    if len(vertices) < 3:
-        return False, [0, 0, 0]
-    
-    # Use first three vertices
-    v0 = vertices[0]
-    v1 = vertices[1]
-    v2 = vertices[2]
-    
-    # Calculate barycentric coordinates
-    denom = ((v1.y() - v2.y()) * (v0.x() - v2.x()) + (v2.x() - v1.x()) * (v0.y() - v2.y()))
-    
-    if abs(denom) < 1e-10:
-        return False, [0, 0, 0]
-    
-    a = ((v1.y() - v2.y()) * (px - v2.x()) + (v2.x() - v1.x()) * (py - v2.y())) / denom
-    b = ((v2.y() - v0.y()) * (px - v2.x()) + (v0.x() - v2.x()) * (py - v2.y())) / denom
-    c = 1 - a - b
-    
-    inside = (a >= -1e-10 and b >= -1e-10 and c >= -1e-10)
-    return inside, [a, b, c]
+    idx = QgsMeshDatasetIndex(group_index, 0)
+    value = mLayer.datasetValue(idx, QgsPointXY(x, y))
+    scalar = value.scalar()
 
-def _pointToFaceDistance(px, py, vertices):
-    """Calculate minimum distance from point to face"""
-    if len(vertices) < 3:
-        return float('inf')
-    
-    min_dist = float('inf')
-    
-    # Check distance to each edge
-    for i in range(len(vertices)):
-        v1 = vertices[i]
-        v2 = vertices[(i + 1) % len(vertices)]
-        
-        dist = _pointToLineSegmentDistance(px, py, v1.x(), v1.y(), v2.x(), v2.y())
-        min_dist = min(min_dist, dist)
-    
-    return min_dist
-
-def _pointToLineSegmentDistance(px, py, x1, y1, x2, y2):
-    """Calculate distance from point to line segment"""
-    dx = x2 - x1
-    dy = y2 - y1
-    
-    if dx == 0 and dy == 0:
-        return math.sqrt((px - x1)**2 + (py - y1)**2)
-    
-    t = max(0, min(1, ((px - x1) * dx + (py - y1) * dy) / (dx*dx + dy*dy)))
-    
-    closest_x = x1 + t * dx
-    closest_y = y1 + t * dy
-    
-    return math.sqrt((px - closest_x)**2 + (py - closest_y)**2)
-
-def _interpolateFromVertices(px, py, vertices, faces=None, use_z_coords=False, bary_coords=None):
-    """Interpolate value from nearest vertex"""
-    if not vertices:
+    if scalar is None or math.isnan(scalar):
         return None
-    
-    min_dist = float('inf')
-    closest_z = None
-    
-    for vertex in vertices:
-        dx = vertex.x() - px
-        dy = vertex.y() - py
-        dist = math.sqrt(dx*dx + dy*dy)
-        
-        if dist < min_dist:
-            min_dist = dist
-            closest_z = vertex.z() if use_z_coords else None
-    
-    return closest_z
+    return scalar
 
 # ajh: note this function is currently unused
 def calcElev(self):
@@ -324,6 +172,10 @@ def elevationSampler(vectSHP, res, layer):
             zp = val_func(xp, yp, layer)
             z.append(zp)
         except Exception as e:
+            # from qgis.core import QgsMessageLog, Qgis
+            # QgsMessageLog.logMessage(
+                # 'valMesh/valRaster exception at ({:.2f},{:.2f}): {}: {}'.format(xp, yp, type(e).__name__, e),
+                # 'Flow Estimator', Qgis.Warning)
             z.append(None)
         dist.append(currentDist)
     
