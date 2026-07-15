@@ -32,6 +32,8 @@ try:
 except:
     from qgis.core import QgsPoint as QgsPointXY, QgsMapLayerRegistry as QgsProject
 
+_HAS_MESH_SUPPORT = hasattr(QgsMapLayer, 'MeshLayer')
+
 def frange(start, end, step):
   while start < end:
     yield start
@@ -62,6 +64,8 @@ def getRasterLayerNames(single_band_only=True):
 
 # Get mesh layer names
 def getMeshLayerNames():
+    if not _HAS_MESH_SUPPORT:
+        return []
     """Returns list of mesh layer names with their CRS"""
     layerMap = QgsProject.instance().mapLayers()
     layerNames = []
@@ -75,7 +79,9 @@ def getMeshLayerNames():
 def getDataSourceLayerNames(single_band_only=True):
     """Returns combined list of raster and mesh layer names"""
     raster_names = getRasterLayerNames(single_band_only)
-    mesh_names = getMeshLayerNames()
+    mesh_names = []
+    if _HAS_MESH_SUPPORT:
+        mesh_names = getMeshLayerNames()
     return sorted(raster_names + mesh_names, key=cmp_to_key(locale.strcoll))
 
 def getRasterLayerByName(layerName):
@@ -158,7 +164,7 @@ def elevationSampler(vectSHP, res, layer):
     vectLength = vectSHP.length
     
     # Determine if layer is raster or mesh
-    is_mesh = layer.type() == QgsMapLayer.MeshLayer
+    is_mesh = _HAS_MESH_SUPPORT and layer.type() == QgsMapLayer.MeshLayer
     val_func = valMesh if is_mesh else valRaster
     
     for currentDist in frange(0, vectLength, res):  
@@ -179,5 +185,6 @@ def elevationSampler(vectSHP, res, layer):
             z.append(None)
         dist.append(currentDist)
     
+    # ajh: we actually only need z, dist
     xyzdList = [x, y, z, dist]
     return xyzdList
