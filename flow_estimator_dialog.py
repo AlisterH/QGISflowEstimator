@@ -477,14 +477,22 @@ class FlowEstimatorDialog(QDialog, FORM_CLASS):
             self.staElev = staElevPrev
             return 
         maxElev = np.array([lbMaxEl,rbMaxEl]).min()-0.001
-        WSE = maxElev
-        WSE = (self.staElev[:,1].max() - self.staElev[:,1].min())/2. + self.staElev[:,1].min()
-        self.cbWSE.setValue(WSE)
-        self.cbWSE.setMinimum(minElev)
-        self.cbWSE.setMaximum(maxElev)
-        self.cbUDwse.setValue(WSE)
-        self.cbUDwse.setMinimum(minElev)
-        self.cbUDwse.setMaximum(maxElev)
+        
+        # It is convenient if we keep the previous WSE value if it is still valid
+        # If it is below the new minimum value, let's get the full channel capacity
+        if self.cbWSE.value() < minElev:
+            self.cbWSE.setRange(minElev, maxElev)
+            self.cbWSE.setValue(maxElev)
+        else:
+            self.cbWSE.setRange(minElev, maxElev)
+
+        if self.cbUDwse.value() < minElev:
+            self.cbUDwse.setRange(minElev, maxElev)
+            self.cbUDwse.setValue(maxElev)
+        else:
+            self.cbUDwse.setRange(minElev, maxElev)
+        
+        self.run()
 
     def doRubberbandSlopeEstimator(self, staElev):
         slope = -(staElev[:,1][-1] - staElev[:,1][0])/staElev[:,0][-1]
