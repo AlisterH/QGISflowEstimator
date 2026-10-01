@@ -185,7 +185,7 @@ class FlowEstimator(object):
                 action)
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
-        del self.toolbar
+        self.toolbar.deleteLater()
 
 
     def run(self):

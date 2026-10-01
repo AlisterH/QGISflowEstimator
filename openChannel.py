@@ -14,7 +14,7 @@ try:
     # QGIS 3.x and 4.x
     from qgis.core import Qgis, QgsMessageLog
     try:
-        # Fully-qualified scoped enum — required on QGIS 4 (PyQt6), works on QGIS 3 too
+        # Fully-qualified scoped enum - required on QGIS 4 (PyQt6), works on QGIS 3 too
         LEVEL_INFO = Qgis.MessageLevel.Info
         LEVEL_WARNING = Qgis.MessageLevel.Warning
         LEVEL_CRITICAL = Qgis.MessageLevel.Critical
@@ -24,7 +24,7 @@ try:
         LEVEL_WARNING = Qgis.Warning
         LEVEL_CRITICAL = Qgis.Critical
 except ImportError:
-    # QGIS 2.x — module is QGis, not Qgis, and levels live on QgsMessageLog
+    # QGIS 2.x - module is QGis, not Qgis, and levels live on QgsMessageLog
     from qgis.core import QgsMessageLog
     LEVEL_INFO = QgsMessageLog.INFO
     LEVEL_WARNING = QgsMessageLog.WARNING
